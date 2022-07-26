@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Waiting+for+the+Sunrise');
+
+* { margin: 0; padding: 0; }
+a { text-decoration: none; color: #bb2222; }
+a:hover { color: #dd1144; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f9f9f9;
+  -webkit-font-smoothing: antialiased;
+}
+
+#gallery { margin: 8px; }
+
+header { margin: 4em auto 0 auto; text-align: center; font-family: 'Waiting for the Sunrise'; }
+header img.avatar { width: 64px; border-radius: 50%; }
+header .title { font-size: 1.6em; font-weight: bold; line-height: 1.6em; }
+header .description { line-height: 1.6em; }
+header nav { margin: 1em 0; }
+header nav a { margin: 0 0.6em; }
+
+.section { margin-top: 3em; }
+.section-header-wrapper { max-width: 800px; margin-left: 4em; }
+.section-title { font-family: 'Waiting for the Sunrise'; font-size: 1.6em; font-weight: medium; line-height: 1.6em; }
+.section-description { line-height: 1.4em; }
+.section-images { margin-top: 2em; }
+
+/* This is requried for Grid */
+.section-image img { width: 100%; }
+
+footer { margin: 4em auto 4em; text-align: center; line-height: 1.6em; }
+footer p { font-size: 0.9em; }
+footer .foto_footer { font-size: 0.8em; }
