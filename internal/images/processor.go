@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"sort"
 
+	cp "github.com/otiai10/copy"
+	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/log"
@@ -95,12 +97,12 @@ func extractImage(path string, option config.ExtractOption, slug string, outputP
 
   if outputPath != nil {
     originalPath := files.OutputPhotoOriginalFilePath(*outputPath, slug, path)
-    if err := ResizeImage(path, originalWidth, originalPath); err != nil {
+    if err := resizeImage(path, originalPath, originalWidth); err != nil {
       return nil, err
     }
 
     thumbnailPath := files.OutputPhotoThumbnailFilePath(*outputPath, slug, path)
-    if err := ResizeImage(path, thumbnailWidth, thumbnailPath); err != nil {
+    if err := resizeImage(path, thumbnailPath, thumbnailWidth); err != nil {
       return nil, err
     }
   }
@@ -116,4 +118,24 @@ func extractImage(path string, option config.ExtractOption, slug string, outputP
       originalHeight,
     },
   }, nil
+}
+
+func resizeImage(src string, to string, width int) error {
+  cached := cache.CachedImage(src, width)
+  if cached != nil {
+    log.Debug("Found cached image for %s", src)
+    err := cp.Copy(*cached, to)
+    if err == nil {
+      return nil
+    }
+  }
+
+  err := ResizeImage(src, to, width);
+  if err != nil {
+    return err
+  }
+
+  cache.AddImage(src, width, to)
+
+  return nil
 }

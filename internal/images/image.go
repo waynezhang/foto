@@ -42,9 +42,9 @@ func GetPhotoSize(path string) (*ImageSize, error) {
   }, nil
 }
 
-func ResizeImage(path string, width int, to string) error {
-  log.Debug("Resizing %s to %d", path, width)
-  data, err := ResizeData(path, width)
+func ResizeImage(src string, to string, width int) error {
+  log.Debug("Resizing %s to %d", src, width)
+  data, err := ResizeData(src, width)
   if err != nil {
     return err
   }

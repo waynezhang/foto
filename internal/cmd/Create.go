@@ -29,7 +29,7 @@ func create (cmd *cobra.Command, args []string) {
   }
 
   targetPath := args[0]
-  if files.IsDirectoryExisting(targetPath) {
+  if files.IsExisting(targetPath) {
     log.Fatal("Directory " + targetPath + " already exists.")
     os.Exit(1)
   }

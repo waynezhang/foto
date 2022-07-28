@@ -39,7 +39,7 @@ func PruneDirectory(path string) error {
 }
 
 func EnsureDirectory(path string) error {
-	if IsDirectoryExisting(path) {
+	if IsExisting(path) {
 		return nil
 	}
 
@@ -50,7 +50,7 @@ func EnsureParentDirectory(path string) error {
 	return EnsureDirectory(filepath.Dir(path))
 }
 
-func IsDirectoryExisting(path string) bool {
+func IsExisting(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
 }
