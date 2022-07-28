@@ -1,12 +1,15 @@
 package cmd
 
 import (
+	"fmt"
 	"html/template"
 	"os"
 	"path/filepath"
+	"time"
 
 	cp "github.com/otiai10/copy"
 	"github.com/spf13/cobra"
+	"github.com/theckman/yacspin"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/images"
@@ -28,17 +31,31 @@ var ExportCmd = func() *cobra.Command {
 }()
 
 func export(cmd *cobra.Command, args []string) {
-  log.Debug("Exprorting sites to %s...", outputPath)
+  spinner, _ := yacspin.New(yacspin.Config {
+    Frequency:       100 * time.Millisecond,
+    CharSet:         yacspin.CharSets[14],
+    Suffix:          fmt.Sprintf(" exporting to %s", outputPath),
+    SuffixAutoColon: true,
+    StopMessage:     " succeed",
+    StopCharacter:   "✓",
+    StopColors:      []string{"fgGreen"},
+  })
+  _ = spinner.Start()
+
+  spinnerMsg := func (format string, a ...interface{}) {
+    spinner.Message(fmt.Sprintf(format, a...))
+  }
 
   cfg := config.Shared()
 
-  log.Debug("Removing directory %s", outputPath)
+  spinnerMsg("Removing directory %s", outputPath)
   err := files.PruneDirectory(outputPath)
   utils.CheckFatalError(err, "Failed to clean directory")
 
   photosDirectory := files.OutputPhotosFilePath(outputPath)
-  log.Debug("Exporting photos to %s", photosDirectory)
-  section := exportPhotos(cfg, photosDirectory)
+  section := exportPhotos(cfg, photosDirectory, func (path string) {
+    spinnerMsg("%s", path)
+  })
 
   indexPath := files.OutputIndexFilePath(outputPath)
   log.Debug("Exporting photos to %s", indexPath)
@@ -46,20 +63,22 @@ func export(cmd *cobra.Command, args []string) {
 
   for _, folder := range cfg.OtherFolders() {
     targetFolder := filepath.Join(outputPath, folder)
-    log.Debug("Copying folder %s to %s", folder, targetFolder)
+    spinnerMsg("copying folder %s to %s", folder, targetFolder)
     
     if err := cp.Copy(folder, targetFolder); err != nil {
       log.Fatal("Failed to copy folder %s to %s (%s).", folder, targetFolder, err)
     }
   }
+
+  _ = spinner.Stop()
 } 
 
-func exportPhotos(cfg config.Config, outputPath string) []images.Section {
+func exportPhotos(cfg config.Config, outputPath string, progressFunc images.ProgressFunc) []images.Section {
   if err := files.EnsureDirectory(outputPath); err != nil {
     return nil
   }
 
-  return images.ExtractPhotos(cfg, &outputPath)
+  return images.ExtractPhotos(cfg, &outputPath, progressFunc)
 }
 
 func generateIndex(cfg map[string]interface{}, sections []images.Section, path string) {

@@ -34,7 +34,7 @@ func preview(cmd *cobra.Command, args []string) {
   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
     handleRoot(
       config.Shared(),
-      images.ExtractPhotos(config.Shared(), nil),
+      images.ExtractPhotos(config.Shared(), nil, nil),
       w,
       r,
     )
@@ -44,7 +44,7 @@ func preview(cmd *cobra.Command, args []string) {
     handleImage(
       strings.TrimPrefix(r.URL.Path, url.PhotosPath),
       config.Shared(),
-      images.ExtractPhotos(config.Shared(), nil),
+      images.ExtractPhotos(config.Shared(), nil, nil),
       w,
       r,
     )

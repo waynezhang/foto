@@ -1,7 +1,7 @@
 OUTPUT_PATH=bin
 BINARY=foto
 
-VERSION=1.0.2
+VERSION=1.0.3
 BUILD_TIME=`date +%Y%m%d%H%M`
 
 LDFLAGS=-ldflags "-X github.com/waynezhang/foto/internal/cmd.Version=${VERSION} -X github.com/waynezhang/foto/internal/cmd.BuildTime=${BUILD_TIME}"

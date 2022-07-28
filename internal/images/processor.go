@@ -26,20 +26,22 @@ type ImageSet struct {
   OriginalSize ImageSize
 }
 
-func ExtractPhotos(cfg config.Config, outputFolder *string) []Section {
+type ProgressFunc func(path string)
+
+func ExtractPhotos(cfg config.Config, outputFolder *string, progressFunc ProgressFunc) []Section {
   if cfg["section"] == nil {
     return []Section{}
   }
   sections := []Section{}
   for _, val := range cfg["section"].([]interface{}) {
-    s := extractSection(val.(map[string]interface{}), cfg.GetExtractOption(), outputFolder)
+    s := extractSection(val.(map[string]interface{}), cfg.GetExtractOption(), outputFolder, progressFunc)
     sections = append(sections, s)
   }
 
   return sections
 }
 
-func extractSection(info map[string]interface{}, option config.ExtractOption, outputPath *string) (Section) {
+func extractSection(info map[string]interface{}, option config.ExtractOption, outputPath *string, progressFunc ProgressFunc) (Section) {
   title := info["title"].(string)
   text := info["text"].(string)
   slug := info["slug"].(string)
@@ -56,6 +58,9 @@ func extractSection(info map[string]interface{}, option config.ExtractOption, ou
     }
 
     log.Debug("Processing image %s", path)
+    if progressFunc != nil { 
+      progressFunc(path)
+    }
     imgSet, err := extractImage(path, option, slug, outputPath)
     if err != nil {
       return err
