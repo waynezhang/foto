@@ -1,9 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Waiting+for+the+Sunrise');
 
-:root {
+@media (prefers-color-scheme: light) {
   body { color: #000000; background: #f9f9f9; }
 }
-
 @media (prefers-color-scheme: dark) {
   body { color: #f9f9f9; background: #000000; }
   img[src*=svg] { filter: invert(90%) grayscale(30%); }
