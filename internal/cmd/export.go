@@ -44,11 +44,6 @@ func export(cmd *cobra.Command, args []string) {
   log.Debug("Exporting photos to %s", indexPath)
   generateIndex(cfg, section, indexPath)
 
-  assetsPath := files.OutputAssetsFilePath(outputPath)
-  log.Debug("Copying assets to %s", assetsPath)
-  err = copyAssets(assetsPath)
-  utils.CheckFatalError(err, "Failed to copy assets files")
-
   for _, folder := range cfg.OtherFolders() {
     targetFolder := filepath.Join(outputPath, folder)
     log.Debug("Copying folder %s to %s", folder, targetFolder)
@@ -82,7 +77,3 @@ func generateIndex(cfg map[string]interface{}, sections []images.Section, path s
   })
   utils.CheckFatalError(err, "Failed to generate index page.")
 } 
-
-func copyAssets(to string) error {
-  return cp.Copy(files.AssetsDir, to)
-}

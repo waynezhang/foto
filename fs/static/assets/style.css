@@ -1,11 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Waiting+for+the+Sunrise');
 
+:root {
+  body { color: #000000; background: #f9f9f9; }
+}
+
+@media (prefers-color-scheme: dark) {
+  body { color: #f9f9f9; background: #000000; }
+  img[src*=svg] { filter: invert(90%) grayscale(30%); }
+}
+
 * { margin: 0; padding: 0; }
 a { text-decoration: none; color: #bb2222; }
 a:hover { color: #dd1144; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #f9f9f9;
   -webkit-font-smoothing: antialiased;
 }
 

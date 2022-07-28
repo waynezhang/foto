@@ -50,9 +50,6 @@ func preview(cmd *cobra.Command, args []string) {
     )
   })
 
-  assetsDir := http.FileServer(http.Dir(files.AssetsDir))
-  http.Handle(url.AssetsPath, http.StripPrefix(url.AssetsPath, assetsDir))
-
   otherFolders := config.Shared().OtherFolders()
   for _, folder := range otherFolders {
     dir := http.FileServer(http.Dir(folder))

@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	AssetsDir string = "assets"
 	TemplatesDir string = "templates"
 )
 
@@ -16,10 +15,6 @@ var (
 
 func OutputIndexFilePath(basePath string) string {
 	return filepath.Join(basePath, "index.html")
-}
-
-func OutputAssetsFilePath(basePath string) string {
-	return filepath.Join(basePath, AssetsDir)
 }
 
 func OutputPhotosFilePath(basePath string) string {
