@@ -11,6 +11,21 @@ Demo site: [https://foto.lhzhang.com](https://foto.lhzhang.com)
 - `Simple` One binary, three commands. No database.
 - `Customizable` Highly customizable by configuration and template files.
 
+## Install
+
+### macOS
+
+```bash
+$ brew tap waynezhang/tap
+$ brew install foto
+```
+
+Or download the binary from [here](https://github.com/waynezhang/foto/releases)
+
+### Other platforms
+
+Download the binary from [here](https://github.com/waynezhang/foto/releases)
+
 ## Usage
 
 ### Create a new site
