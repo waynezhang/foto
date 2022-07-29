@@ -1,0 +1,40 @@
+project_name: foto
+env:
+  - GO111MODULE=on
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - main: .
+    binary: foto
+    ldflags:
+      - -s -w
+      - -X github.com/waynezhang/foto/internal/cmd.Version={{.Version}}
+      - -X github.com/waynezhang/foto/internal/cmd.Revision={{.ShortCommit}}
+    env:
+      - CGO_ENABLED=0
+archives:
+  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    replacements:
+      darwin: darwin
+      linux: linux
+      windows: windows
+      386: i386
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+brews:
+  - tap:
+      owner: waynezhang
+      name: homebrew-tap
+    commit_author:
+      name: waynezhang
+      email: linghua.zhang@me.com
+    homepage: "https://github.com/waynezhang/foto"
+    description: "Yet another another publishing tool for minimalist photographers." 
+    license: "MIT License"
+    skip_upload: auto
+
+release:
+  prerelease: auto

@@ -1,10 +1,10 @@
 OUTPUT_PATH=bin
 BINARY=foto
 
-VERSION=1.0.3
+VERSION=`git tag | tr -d "v"`
 BUILD_TIME=`date +%Y%m%d%H%M`
 
-LDFLAGS=-ldflags "-X github.com/waynezhang/foto/internal/cmd.Version=${VERSION} -X github.com/waynezhang/foto/internal/cmd.BuildTime=${BUILD_TIME}"
+LDFLAGS=-ldflags "-X github.com/waynezhang/foto/internal/cmd.Version=${VERSION} -X github.com/waynezhang/foto/internal/cmd.Revision=${BUILD_TIME}"
 
 all: build
 
