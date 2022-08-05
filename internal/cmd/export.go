@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"html/template"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -14,10 +15,12 @@ import (
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/images"
 	"github.com/waynezhang/foto/internal/log"
+	mm "github.com/waynezhang/foto/internal/minimize"
 	"github.com/waynezhang/foto/internal/utils"
 )
 
 var outputPath string
+var minimize bool
 
 var ExportCmd = func() *cobra.Command {
   cmd := &cobra.Command {
@@ -26,6 +29,7 @@ var ExportCmd = func() *cobra.Command {
     Run: export,
   }
   cmd.Flags().StringVarP(&outputPath, "output", "o", "dist", "Output directory")
+  cmd.Flags().BoolVarP(&minimize, "minimize", "m", false, "Wether minimize output files(css, html, js supported) or not")
 
   return cmd
 }()
@@ -60,6 +64,9 @@ func export(cmd *cobra.Command, args []string) {
   indexPath := files.OutputIndexFilePath(outputPath)
   log.Debug("Exporting photos to %s", indexPath)
   generateIndex(cfg, section, indexPath)
+  if minimize {
+    _ = mm.MinimizeFile(indexPath, indexPath)
+  }
 
   for _, folder := range cfg.OtherFolders() {
     targetFolder := filepath.Join(outputPath, folder)
@@ -67,6 +74,14 @@ func export(cmd *cobra.Command, args []string) {
     
     if err := cp.Copy(folder, targetFolder); err != nil {
       log.Fatal("Failed to copy folder %s to %s (%s).", folder, targetFolder, err)
+    }
+    if minimize {
+      _ = filepath.WalkDir(targetFolder, func(path string, d fs.DirEntry, err error) error {
+        if mm.Minimizable(path) {
+          return mm.MinimizeFile(path, path)
+        }
+        return nil
+      })
     }
   }
 

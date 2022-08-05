@@ -9,6 +9,7 @@ require (
 	github.com/otiai10/copy v1.7.0
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
+	github.com/tdewolff/minify/v2 v2.12.0
 	github.com/theckman/yacspin v0.13.12
 )
 
@@ -29,6 +30,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.0 // indirect
+	github.com/tdewolff/parse/v2 v2.6.2 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
 	golang.org/x/image v0.0.0-20220722155232-062f8c9fd539 // indirect
 	golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10 // indirect
