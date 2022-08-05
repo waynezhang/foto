@@ -103,6 +103,12 @@ Exprorting sites to /Users/xxx/site_docs...
   thumbnailWidth = 640
   # Width for enlarged images
   originalWidth = 2048
+
+  # Layout for grids
+  [layout]
+  minColumn = 1
+  maxColumn = 4
+  minWidth = 200
   
   # Photo sections
   # You can remove or add more sections by adding following lines

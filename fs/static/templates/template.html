@@ -73,8 +73,8 @@
       import { JustifiedGrid } from 'https://cdn.skypack.dev/@egjs/grid';
       const options = {
         gap: 8,
-        columnRange: [1, 4],
-        sizeRange: [200, Infinity],
+        columnRange: [{{ .Config.layout.mincolumn }}, {{ .Config.layout.maxcolumn }}],
+        sizeRange: [{{ .Config.layout.minwidth }}, Infinity],
       };
       {{- range $section := .Sections }}
       (new JustifiedGrid(".section-images-{{ .Slug }}", options)).renderItems();
