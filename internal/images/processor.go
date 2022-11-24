@@ -46,6 +46,10 @@ func extractSection(info map[string]interface{}, option config.ExtractOption, ou
   text := info["text"].(string)
   slug := info["slug"].(string)
   folder := info["folder"].(string)
+  ascending := false
+  if v := info["ascending"]; v != nil {
+    ascending = v.(bool)
+  }
   log.Debug("Extacting section [%s][/%s] %s", title, slug, folder)
 
   imageSet := []ImageSet{}
@@ -74,7 +78,11 @@ func extractSection(info map[string]interface{}, option config.ExtractOption, ou
   }
   
   sort.SliceStable(imageSet, func(i, j int) bool {
-    return imageSet[i].FileName > imageSet[j].FileName
+    if ascending {
+      return imageSet[i].FileName < imageSet[j].FileName
+    } else {
+      return imageSet[i].FileName > imageSet[j].FileName
+    }
   })
 
   return Section {

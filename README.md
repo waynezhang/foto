@@ -117,18 +117,21 @@ Exprorting sites to /Users/xxx/site_docs...
   #     text = "section description"
   #     slug = "section-slug"
   #     folder = "folder of photos"
+  #     ascending = false
   # Photo sections are added in the order encountered.
   [[section]]
   title = "Section 1"
   text = ""
   slug = "section-1"
   folder = "~/photos/section-1"
+  ascending = false
   
   [[section]]
   title = "Section 2"
   text = ""
   slug = "section-2"
   folder = "~/photos/section-2"
+  ascending = false
   
   # Other setings
   [others]
