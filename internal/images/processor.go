@@ -4,7 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-
+	"html/template"
+  
 	cp "github.com/otiai10/copy"
 	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
@@ -14,7 +15,7 @@ import (
 
 type Section struct {
   Title string
-  Text string
+  Text template.HTML
   Slug string
   Folder string
   ImageSets []ImageSet
@@ -43,7 +44,7 @@ func ExtractPhotos(cfg config.Config, outputFolder *string, progressFunc Progres
 
 func extractSection(info map[string]interface{}, option config.ExtractOption, outputPath *string, progressFunc ProgressFunc) (Section) {
   title := info["title"].(string)
-  text := info["text"].(string)
+  text := template.HTML(info["text"].(string))
   slug := info["slug"].(string)
   folder := info["folder"].(string)
   ascending := false
