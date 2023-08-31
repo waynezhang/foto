@@ -114,7 +114,7 @@ Exprorting sites to /Users/xxx/site_docs...
   # You can remove or add more sections by adding following lines
   #     [[section]]
   #     title = "section title"
-  #     text = "section description"
+  #     text = "section description (HTML supported)"
   #     slug = "section-slug"
   #     folder = "folder of photos"
   #     ascending = false
