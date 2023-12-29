@@ -13,6 +13,8 @@ import (
 	"github.com/waynezhang/foto/internal/log"
 )
 
+var cacheDirectory = ".foto"
+
 func AddImage(src string, width int, file string) {
 	checksum, err := checksum(src)
 	if err != nil {
@@ -44,6 +46,19 @@ func CachedImage(src string, width int) *string {
 	return &path
 }
 
+func Clear() {
+  if _, err := os.Stat(cacheDirectory); err != nil {
+    if !os.IsNotExist(err) {
+      log.Fatal("Failed to find cache directory %s (%s).", cacheDirectory, err.Error()) 
+    }
+    return
+  }
+  err := os.RemoveAll(cacheDirectory) 
+  if err != nil { 
+    log.Fatal("Failed to remove cache directory %s (%s).", cacheDirectory, err.Error()) 
+  }
+}
+
 func checksum(path string) (*string, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -62,5 +77,5 @@ func checksum(path string) (*string, error) {
 }
 
 func imagePath(checksum string, width int) string {
-	return filepath.Join(".foto", fmt.Sprintf("%s-%d", checksum, width))
+	return filepath.Join(cacheDirectory, fmt.Sprintf("%s-%d", checksum, width))
 }

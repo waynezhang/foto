@@ -21,9 +21,10 @@ func Execute() {
 
   rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
+  rootCmd.AddCommand(ClearCacheCmd)
   rootCmd.AddCommand(CreateCmd)
-  rootCmd.AddCommand(PreviewCmd)
   rootCmd.AddCommand(ExportCmd)
+  rootCmd.AddCommand(PreviewCmd)
   rootCmd.AddCommand(VersionCmd)
 
   err := rootCmd.Execute()
