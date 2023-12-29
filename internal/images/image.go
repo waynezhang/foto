@@ -56,7 +56,7 @@ func ResizeImage(src string, to string, width int) error {
 }
 
 func ResizeData(path string, width int) (*bytes.Buffer, error) {
-  src, err := imaging.Open(path)
+  src, err := imaging.Open(path, imaging.AutoOrientation(true))
   if err != nil {
     return nil, err
   }
