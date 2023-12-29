@@ -64,6 +64,12 @@ The default port number is `5000`. It can be changed by `-p` flag.
 Exprorting sites to /Users/xxx/site_docs...
 ```
 
+### Clear cache
+
+```bash
+foto clear-cache
+```
+
 ## Customize
 
 ### Basic customize `foto.toml`
