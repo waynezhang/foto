@@ -159,6 +159,10 @@ It's also possible to add additional settings in `foto.toml` ([ref](https://toml
 
 # Changelogs
 
+## v1.0.7
+
+`.Config.PhotoSwipeVersion` is available in [template](https://github.com/waynezhang/foto/commit/41ffd5adea5bd056c0445bfe8a42e93eb16d6602).
+
 ## v1.0.6
 v1.0.6 fixed the [image rotation issue](https://github.com/waynezhang/foto/issues/3). You need to [clear the cache](#clear-cache) to regenerate the proceeded images.
 
