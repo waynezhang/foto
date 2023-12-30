@@ -157,6 +157,11 @@ The template file is placed in `templates/template.html`.
 It's also possible to add additional settings in `foto.toml` ([ref](https://toml.io/en)) and refer it in template file.
 `foto` uses `html/template` package in Golang. Please refer to [this link](https://pkg.go.dev/html/template) for more information.
 
+# Changelogs
+
+## v1.0.6
+v1.0.6 fixed the [image rotation issue](https://github.com/waynezhang/foto/issues/3). You need to [clear the cache](#clear-cache) to regenerate the proceeded images.
+
 # LICENSE
  
 See [LICENSE](./LICENSE)
