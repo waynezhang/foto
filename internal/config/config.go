@@ -5,6 +5,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/log"
 	"github.com/waynezhang/foto/internal/utils"
 )
@@ -39,6 +40,7 @@ func Shared() Config {
 		v.WatchConfig()
 	})
 
+  instance["PhotoSwipeVersion"] = constants.PhotoSwipeVersion
 	return instance
 }
 

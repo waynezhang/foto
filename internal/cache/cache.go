@@ -11,9 +11,8 @@ import (
 	cp "github.com/otiai10/copy"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/log"
+  "github.com/waynezhang/foto/internal/constants"
 )
-
-var cacheDirectory = ".foto"
 
 func AddImage(src string, width int, file string) {
 	checksum, err := checksum(src)
@@ -47,15 +46,15 @@ func CachedImage(src string, width int) *string {
 }
 
 func Clear() {
-  if _, err := os.Stat(cacheDirectory); err != nil {
+  if _, err := os.Stat(constants.CacheDirectoryName); err != nil {
     if !os.IsNotExist(err) {
-      log.Fatal("Failed to find cache directory %s (%s).", cacheDirectory, err.Error()) 
+      log.Fatal("Failed to find cache directory %s (%s).", constants.CacheDirectoryName, err.Error()) 
     }
     return
   }
-  err := os.RemoveAll(cacheDirectory) 
+  err := os.RemoveAll(constants.CacheDirectoryName) 
   if err != nil { 
-    log.Fatal("Failed to remove cache directory %s (%s).", cacheDirectory, err.Error()) 
+    log.Fatal("Failed to remove cache directory %s (%s).", constants.CacheDirectoryName, err.Error()) 
   }
 }
 
@@ -77,5 +76,5 @@ func checksum(path string) (*string, error) {
 }
 
 func imagePath(checksum string, width int) string {
-	return filepath.Join(cacheDirectory, fmt.Sprintf("%s-%d", checksum, width))
+	return filepath.Join(constants.CacheDirectoryName, fmt.Sprintf("%s-%d", checksum, width))
 }
