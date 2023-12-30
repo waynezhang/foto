@@ -11,6 +11,14 @@ all: build
 build:
 	@go build ${LDFLAGS} -o ${OUTPUT_PATH}/${BINARY} main.go
 
+test:
+	@go test ./...
+
+coverage:
+	@TMPFILE=$$(mktemp); \
+		go test ./... -coverprofile=$$TMPFILE; \
+		go tool cover -html $$TMPFILE
+
 .PHONY: install
 install:
 	@go install ${LDFLAGS} ./...

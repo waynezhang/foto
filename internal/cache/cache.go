@@ -1,26 +1,48 @@
 package cache
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
+	"sync"
 
 	cp "github.com/otiai10/copy"
+	"github.com/waynezhang/foto/internal/constants"
+	"github.com/waynezhang/foto/internal/utils"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/log"
-  "github.com/waynezhang/foto/internal/constants"
 )
 
-func AddImage(src string, width int, file string) {
-	checksum, err := checksum(src)
+type Cache struct {
+  directoryName string
+}
+
+var (
+  once sync.Once
+  instance Cache
+)
+
+func Shared() Cache {
+  once.Do(func() {
+    instance = New(constants.CacheDirectoryName)
+  })
+  return instance
+}
+
+func New(directoryName string) Cache {
+    instance = Cache{}
+    instance.directoryName = directoryName
+    return instance
+}
+
+// `src` is used to compute checksum, `file` will be copied to the cache
+func (cache Cache) AddImage(src string, width int, file string) {
+	checksum, err := utils.FileChecksum(src)
 	if err != nil {
 		return
 	}
 
-	path := imagePath(*checksum, width)
+	path := cache.imagePath(*checksum, width)
 	log.Debug("Add cache image %s for %s", path, src)
 	err = files.EnsureParentDirectory(path)
 	if err != nil {
@@ -30,14 +52,14 @@ func AddImage(src string, width int, file string) {
 	_ = cp.Copy(file, path)
 }
 
-func CachedImage(src string, width int) *string {
-	checksum, err := checksum(src)
+func (cache Cache) CachedImage(src string, width int) *string {
+	checksum, err := utils.FileChecksum(src)
 	if err != nil {
 		log.Fatal("Failed to generate file hash %s (%s).", src, err.Error())
 		return nil
 	}
 
-	path := imagePath(*checksum, width)
+	path := cache.imagePath(*checksum, width)
 	if !files.IsExisting(path) {
 		return nil
 	}
@@ -45,36 +67,19 @@ func CachedImage(src string, width int) *string {
 	return &path
 }
 
-func Clear() {
-  if _, err := os.Stat(constants.CacheDirectoryName); err != nil {
+func (cache Cache) Clear() {
+  if _, err := os.Stat(cache.directoryName); err != nil {
     if !os.IsNotExist(err) {
-      log.Fatal("Failed to find cache directory %s (%s).", constants.CacheDirectoryName, err.Error()) 
+      log.Fatal("Failed to find cache directory %s (%s).", cache.directoryName, err.Error()) 
     }
     return
   }
-  err := os.RemoveAll(constants.CacheDirectoryName) 
+  err := os.RemoveAll(cache.directoryName) 
   if err != nil { 
-    log.Fatal("Failed to remove cache directory %s (%s).", constants.CacheDirectoryName, err.Error()) 
+    log.Fatal("Failed to remove cache directory %s (%s).", cache.directoryName, err.Error()) 
   }
 }
 
-func checksum(path string) (*string, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	hasher := sha256.New()
-	_, err = io.Copy(hasher, f)
-	if err != nil {
-		return nil, nil
-	}
-
-	value := hex.EncodeToString(hasher.Sum(nil))
-	return &value, nil
-}
-
-func imagePath(checksum string, width int) string {
-	return filepath.Join(constants.CacheDirectoryName, fmt.Sprintf("%s-%d", checksum, width))
+func (cache Cache) imagePath(checksum string, width int) string {
+	return filepath.Join(cache.directoryName, fmt.Sprintf("%s-%d", checksum, width))
 }

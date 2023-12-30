@@ -135,7 +135,7 @@ func extractImage(path string, option config.ExtractOption, slug string, outputP
 }
 
 func resizeImage(src string, to string, width int) error {
-  cached := cache.CachedImage(src, width)
+  cached := cache.Shared().CachedImage(src, width)
   if cached != nil {
     log.Debug("Found cached image for %s", src)
     err := cp.Copy(*cached, to)
@@ -149,7 +149,7 @@ func resizeImage(src string, to string, width int) error {
     return err
   }
 
-  cache.AddImage(src, width, to)
+  cache.Shared().AddImage(src, width, to)
 
   return nil
 }
