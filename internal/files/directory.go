@@ -5,14 +5,6 @@ import (
 	"path/filepath"
 )
 
-const (
-	TemplatesDir string = "templates"
-)
-
-var (
-	TemplateFilePath string = filepath.Join("templates", "template.html")
-)
-
 func OutputIndexFilePath(basePath string) string {
 	return filepath.Join(basePath, "index.html")
 }

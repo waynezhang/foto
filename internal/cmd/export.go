@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/theckman/yacspin"
 	"github.com/waynezhang/foto/internal/config"
+	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/images"
 	"github.com/waynezhang/foto/internal/log"
@@ -101,7 +102,7 @@ func generateIndex(cfg map[string]interface{}, sections []images.Section, path s
   utils.CheckFatalError(err, "Failed to create index file.")
   defer f.Close()
 
-  tmpl := template.Must(template.ParseFiles(files.TemplateFilePath))
+  tmpl := template.Must(template.ParseFiles(constants.TemplateFilePath))
   err = tmpl.Execute(f, struct {
     Config map[string]interface{}
     Sections []images.Section

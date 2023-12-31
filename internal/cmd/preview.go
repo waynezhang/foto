@@ -8,11 +8,11 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/waynezhang/foto/internal/config"
-	"github.com/waynezhang/foto/internal/files"
+	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/images"
 	"github.com/waynezhang/foto/internal/log"
-	"github.com/waynezhang/foto/internal/utils"
 	"github.com/waynezhang/foto/internal/url"
+	"github.com/waynezhang/foto/internal/utils"
 )
 
 var port = 5000
@@ -63,7 +63,7 @@ func preview(cmd *cobra.Command, args []string) {
 }
 
 func handleRoot(cfg map[string]interface{}, sections []images.Section, w http.ResponseWriter, r *http.Request) {
-  tmpl := template.Must(template.ParseFiles(files.TemplateFilePath))
+  tmpl := template.Must(template.ParseFiles(constants.TemplateFilePath))
   _ = tmpl.Execute(w, struct {
     Config map[string]interface{}
     Sections []images.Section
