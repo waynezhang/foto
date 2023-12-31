@@ -33,13 +33,13 @@ func TestResizeImage(t *testing.T) {
 
 	path := filepath.Join(tmp, "resized.jpg")
 
-	err = ResizeImage("nonexisting-file.jpg", path, test.ResizedWidth)
+	err = ResizeImage("nonexisting-file.jpg", path, test.ThumbnailWidth)
 	assert.True(t, os.IsNotExist(err))
 	assert.False(t, files.IsExisting(path))
 
-	err = ResizeImage(test.Testfile, path, test.ResizedWidth)
+	err = ResizeImage(test.Testfile, path, test.ThumbnailWidth)
 	assert.Nil(t, err)
 
 	checksum, err := utils.FileChecksum(path)
-	assert.Equal(t, test.ExpectedResizedChecksum, *checksum)
+	assert.Equal(t, test.ExpectedThubmnailChecksum, *checksum)
 }

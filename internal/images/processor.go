@@ -29,20 +29,36 @@ type ImageSet struct {
 
 type ProgressFunc func(path string)
 
-func ExtractPhotos(cfg config.Config, outputFolder *string, progressFunc ProgressFunc) []Section {
-	if cfg["section"] == nil {
-		return []Section{}
+type Processor struct {
+	sectionMetadata []config.SectionMetadata
+	option          config.ExtractOption
+	outputFolder    *string
+	cache           cache.Cache
+	progressFunc    ProgressFunc
+}
+
+func NewProcessor(sectionMetadata []config.SectionMetadata, option config.ExtractOption, outputFolder *string, cache cache.Cache, progressFunc ProgressFunc) Processor {
+	instance := Processor{
+		sectionMetadata: sectionMetadata,
+		option:          option,
+		outputFolder:    outputFolder,
+		cache:           cache,
+		progressFunc:    progressFunc,
 	}
+	return instance
+}
+
+func (processor Processor) ExtractPhotos() []Section {
 	sections := []Section{}
-	for _, val := range cfg["section"].([]interface{}) {
-		s := extractSection(val.(map[string]interface{}), cfg.GetExtractOption(), outputFolder, progressFunc)
+	for _, val := range processor.sectionMetadata {
+		s := extractSection(val, processor.option, processor.outputFolder, processor.cache, processor.progressFunc)
 		sections = append(sections, s)
 	}
 
 	return sections
 }
 
-func extractSection(info map[string]interface{}, option config.ExtractOption, outputPath *string, progressFunc ProgressFunc) Section {
+func extractSection(info config.SectionMetadata, option config.ExtractOption, outputPath *string, cache cache.Cache, progressFunc ProgressFunc) Section {
 	title := info["title"].(string)
 	text := template.HTML(info["text"].(string))
 	slug := info["slug"].(string)
@@ -66,7 +82,7 @@ func extractSection(info map[string]interface{}, option config.ExtractOption, ou
 		if progressFunc != nil {
 			progressFunc(path)
 		}
-		imgSet, err := extractImage(path, option, slug, outputPath)
+		imgSet, err := extractImage(path, option, slug, outputPath, cache)
 		if err != nil {
 			return err
 		}
@@ -95,7 +111,7 @@ func extractSection(info map[string]interface{}, option config.ExtractOption, ou
 	}
 }
 
-func extractImage(path string, option config.ExtractOption, slug string, outputPath *string) (*ImageSet, error) {
+func extractImage(path string, option config.ExtractOption, slug string, outputPath *string, cache cache.Cache) (*ImageSet, error) {
 	imageSize, err := GetPhotoSize(path)
 	if err != nil {
 		return nil, err
@@ -111,12 +127,12 @@ func extractImage(path string, option config.ExtractOption, slug string, outputP
 
 	if outputPath != nil {
 		originalPath := files.OutputPhotoOriginalFilePath(*outputPath, slug, path)
-		if err := resizeImage(path, originalPath, originalWidth); err != nil {
+		if err := resizeImageAndCache(path, originalPath, originalWidth, cache); err != nil {
 			return nil, err
 		}
 
 		thumbnailPath := files.OutputPhotoThumbnailFilePath(*outputPath, slug, path)
-		if err := resizeImage(path, thumbnailPath, thumbnailWidth); err != nil {
+		if err := resizeImageAndCache(path, thumbnailPath, thumbnailWidth, cache); err != nil {
 			return nil, err
 		}
 	}
@@ -134,8 +150,8 @@ func extractImage(path string, option config.ExtractOption, slug string, outputP
 	}, nil
 }
 
-func resizeImage(src string, to string, width int) error {
-	cached := cache.Shared().CachedImage(src, width)
+func resizeImageAndCache(src string, to string, width int, cache cache.Cache) error {
+	cached := cache.CachedImage(src, width)
 	if cached != nil {
 		log.Debug("Found cached image for %s", src)
 		err := cp.Copy(*cached, to)
@@ -149,7 +165,7 @@ func resizeImage(src string, to string, width int) error {
 		return err
 	}
 
-	cache.Shared().AddImage(src, width, to)
+	cache.AddImage(src, width, to)
 
 	return nil
 }

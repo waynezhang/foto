@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/images"
@@ -31,10 +32,19 @@ var PreviewCmd = func() *cobra.Command {
 func preview(cmd *cobra.Command, args []string) {
 	log.Debug("Creating Preview...")
 
+	config := config.Shared()
+	processor := images.NewProcessor(
+		config.GetSectionMetadata(),
+		config.GetExtractOption(),
+		nil,
+		cache.Shared(),
+		nil,
+	)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handleRoot(
-			config.Shared(),
-			images.ExtractPhotos(config.Shared(), nil, nil),
+			config,
+			processor.ExtractPhotos(),
 			w,
 			r,
 		)
@@ -43,14 +53,14 @@ func preview(cmd *cobra.Command, args []string) {
 	http.HandleFunc(url.PhotosPath, func(w http.ResponseWriter, r *http.Request) {
 		handleImage(
 			strings.TrimPrefix(r.URL.Path, url.PhotosPath),
-			config.Shared(),
-			images.ExtractPhotos(config.Shared(), nil, nil),
+			config,
+			processor.ExtractPhotos(),
 			w,
 			r,
 		)
 	})
 
-	otherFolders := config.Shared().OtherFolders()
+	otherFolders := config.OtherFolders()
 	for _, folder := range otherFolders {
 		dir := http.FileServer(http.Dir(folder))
 		path := "/" + folder + "/"

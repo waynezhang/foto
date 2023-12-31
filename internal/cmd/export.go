@@ -11,6 +11,7 @@ import (
 	cp "github.com/otiai10/copy"
 	"github.com/spf13/cobra"
 	"github.com/theckman/yacspin"
+	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/files"
@@ -94,7 +95,14 @@ func exportPhotos(cfg config.Config, outputPath string, progressFunc images.Prog
 		return nil
 	}
 
-	return images.ExtractPhotos(cfg, &outputPath, progressFunc)
+	processor := images.NewProcessor(
+		cfg.GetSectionMetadata(),
+		cfg.GetExtractOption(),
+		&outputPath,
+		cache.Shared(),
+		progressFunc,
+	)
+	return processor.ExtractPhotos()
 }
 
 func generateIndex(cfg map[string]interface{}, sections []images.Section, path string) {

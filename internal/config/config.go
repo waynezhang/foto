@@ -16,6 +16,8 @@ type ExtractOption struct {
 	OriginalWidth  int
 }
 
+type SectionMetadata map[string]interface{}
+
 var (
 	once     sync.Once
 	instance Config
@@ -42,6 +44,20 @@ func New(file string) Config {
 	v.WatchConfig()
 
 	return instance
+}
+
+func (cfg Config) GetSectionMetadata() []SectionMetadata {
+	metadata := []SectionMetadata{}
+
+	sections := cfg["section"].([]any)
+	if sections == nil {
+		return metadata
+	}
+
+	for _, v := range sections {
+		metadata = append(metadata, (v.(map[string]interface{})))
+	}
+	return metadata
 }
 
 func (cfg Config) GetExtractOption() ExtractOption {

@@ -23,13 +23,13 @@ func TestCache(t *testing.T) {
 	img := instance.CachedImage(test.Testfile, 640)
 	assert.Nil(t, img)
 
-	instance.AddImage(test.Testfile, 640, test.ResizedFile)
+	instance.AddImage(test.Testfile, 640, test.ThumbnailFile)
 	img = instance.CachedImage(test.Testfile, 640)
 	expectedPath := fmt.Sprintf("%s/%s-640", dirName, test.ExpectedChecksum)
 	assert.Equal(t, expectedPath, *img)
 
 	resizedChecksum, _ := utils.FileChecksum(expectedPath)
-	assert.Equal(t, test.ExpectedResizedChecksum, *resizedChecksum)
+	assert.Equal(t, test.ExpectedThubmnailChecksum, *resizedChecksum)
 
 	instance.Clear()
 	assert.NoFileExists(t, dirName)
