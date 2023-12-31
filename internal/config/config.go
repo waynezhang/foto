@@ -3,7 +3,6 @@ package config
 import (
 	"sync"
 
-	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/log"
@@ -24,24 +23,25 @@ var (
 
 func Shared() Config {
 	once.Do(func() {
+    instance = New("./foto.toml")
+	})
+
+	return instance
+}
+
+func New(file string) Config {
 		v := viper.New()
-		v.SetConfigName("foto")
-		v.SetConfigType("toml")
-		v.AddConfigPath(".")
+    v.SetConfigFile(file)
 
 		err := v.ReadInConfig()
 		utils.CheckFatalError(err, "Failed to parse config file foto.toml")
 
 		instance = loadConfig(v)
 
-		v.OnConfigChange(func(e fsnotify.Event) {
-			instance = loadConfig(v)
-		})
+    instance["PhotoSwipeVersion"] = constants.PhotoSwipeVersion
 		v.WatchConfig()
-	})
 
-  instance["PhotoSwipeVersion"] = constants.PhotoSwipeVersion
-	return instance
+    return instance
 }
 
 func (cfg Config) GetExtractOption() ExtractOption {

@@ -13,7 +13,7 @@ author = "Author Here"
 
 [[site.nav]]
 icon = "assets/icons/home.svg"
-link = "https://"
+link = "https://example.com"
 
 [[site.nav]]
 icon = "assets/icons/instagram.svg"
