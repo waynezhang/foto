@@ -95,14 +95,14 @@ func exportPhotos(cfg config.Config, outputPath string, progressFunc images.Prog
 		return nil
 	}
 
-	processor := images.NewProcessor(
+	extractor := images.NewExtractor(
 		cfg.GetSectionMetadata(),
 		cfg.GetExtractOption(),
 		&outputPath,
 		cache.Shared(),
 		progressFunc,
 	)
-	return processor.ExtractPhotos()
+	return extractor.ExtractPhotos()
 }
 
 func generateIndex(cfg map[string]interface{}, sections []images.Section, path string) {

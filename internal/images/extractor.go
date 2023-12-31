@@ -29,7 +29,7 @@ type ImageSet struct {
 
 type ProgressFunc func(path string)
 
-type Processor struct {
+type Extractor struct {
 	sectionMetadata []config.SectionMetadata
 	option          config.ExtractOption
 	outputFolder    *string
@@ -37,8 +37,8 @@ type Processor struct {
 	progressFunc    ProgressFunc
 }
 
-func NewProcessor(sectionMetadata []config.SectionMetadata, option config.ExtractOption, outputFolder *string, cache cache.Cache, progressFunc ProgressFunc) Processor {
-	instance := Processor{
+func NewExtractor(sectionMetadata []config.SectionMetadata, option config.ExtractOption, outputFolder *string, cache cache.Cache, progressFunc ProgressFunc) Extractor {
+	instance := Extractor{
 		sectionMetadata: sectionMetadata,
 		option:          option,
 		outputFolder:    outputFolder,
@@ -48,10 +48,10 @@ func NewProcessor(sectionMetadata []config.SectionMetadata, option config.Extrac
 	return instance
 }
 
-func (processor Processor) ExtractPhotos() []Section {
+func (extractor Extractor) ExtractPhotos() []Section {
 	sections := []Section{}
-	for _, val := range processor.sectionMetadata {
-		s := extractSection(val, processor.option, processor.outputFolder, processor.cache, processor.progressFunc)
+	for _, val := range extractor.sectionMetadata {
+		s := extractSection(val, extractor.option, extractor.outputFolder, extractor.cache, extractor.progressFunc)
 		sections = append(sections, s)
 	}
 

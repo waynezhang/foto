@@ -33,7 +33,7 @@ func preview(cmd *cobra.Command, args []string) {
 	log.Debug("Creating Preview...")
 
 	config := config.Shared()
-	processor := images.NewProcessor(
+	extractor := images.NewExtractor(
 		config.GetSectionMetadata(),
 		config.GetExtractOption(),
 		nil,
@@ -44,7 +44,7 @@ func preview(cmd *cobra.Command, args []string) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handleRoot(
 			config,
-			processor.ExtractPhotos(),
+			extractor.ExtractPhotos(),
 			w,
 			r,
 		)
@@ -54,7 +54,7 @@ func preview(cmd *cobra.Command, args []string) {
 		handleImage(
 			strings.TrimPrefix(r.URL.Path, url.PhotosPath),
 			config,
-			processor.ExtractPhotos(),
+			extractor.ExtractPhotos(),
 			w,
 			r,
 		)
