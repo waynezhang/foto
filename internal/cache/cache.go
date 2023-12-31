@@ -2,7 +2,6 @@ package cache
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"sync"
 
@@ -68,16 +67,11 @@ func (cache Cache) CachedImage(src string, width int) *string {
 }
 
 func (cache Cache) Clear() {
-	if _, err := os.Stat(cache.directoryName); err != nil {
-		if !os.IsNotExist(err) {
-			log.Fatal("Failed to find cache directory %s (%s).", cache.directoryName, err.Error())
-		}
-		return
+	dir := cache.directoryName
+	if !files.IsExisting(dir) {
+		log.Fatal("Failed to find cache directory %s.", dir)
 	}
-	err := os.RemoveAll(cache.directoryName)
-	if err != nil {
-		log.Fatal("Failed to remove cache directory %s (%s).", cache.directoryName, err.Error())
-	}
+	files.PruneDirectory(dir)
 }
 
 func (cache Cache) imagePath(checksum string, width int) string {
