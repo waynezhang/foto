@@ -46,4 +46,3 @@ func MinimizeFile(src string, dest string) error {
 	err = os.WriteFile(dest, buf.Bytes(), 0644)
 	return err
 }
-

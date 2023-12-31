@@ -5,10 +5,10 @@ import (
 	"github.com/waynezhang/foto/internal/cache"
 )
 
-var ClearCacheCmd = &cobra.Command {
-  Use: "clear-cache",
-  Short: "Clear local cache",
-  Run: func(cmd *cobra.Command, args []string) {
-    cache.Shared().Clear()
-  },
+var ClearCacheCmd = &cobra.Command{
+	Use:   "clear-cache",
+	Short: "Clear local cache",
+	Run: func(cmd *cobra.Command, args []string) {
+		cache.Shared().Clear()
+	},
 }

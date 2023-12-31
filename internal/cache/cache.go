@@ -8,31 +8,31 @@ import (
 
 	cp "github.com/otiai10/copy"
 	"github.com/waynezhang/foto/internal/constants"
-	"github.com/waynezhang/foto/internal/utils"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/log"
+	"github.com/waynezhang/foto/internal/utils"
 )
 
 type Cache struct {
-  directoryName string
+	directoryName string
 }
 
 var (
-  once sync.Once
-  instance Cache
+	once     sync.Once
+	instance Cache
 )
 
 func Shared() Cache {
-  once.Do(func() {
-    instance = New(constants.CacheDirectoryName)
-  })
-  return instance
+	once.Do(func() {
+		instance = New(constants.CacheDirectoryName)
+	})
+	return instance
 }
 
 func New(directoryName string) Cache {
-    instance = Cache{}
-    instance.directoryName = directoryName
-    return instance
+	instance = Cache{}
+	instance.directoryName = directoryName
+	return instance
 }
 
 // `src` is used to compute checksum, `file` will be copied to the cache
@@ -63,21 +63,21 @@ func (cache Cache) CachedImage(src string, width int) *string {
 	if !files.IsExisting(path) {
 		return nil
 	}
-	
+
 	return &path
 }
 
 func (cache Cache) Clear() {
-  if _, err := os.Stat(cache.directoryName); err != nil {
-    if !os.IsNotExist(err) {
-      log.Fatal("Failed to find cache directory %s (%s).", cache.directoryName, err.Error()) 
-    }
-    return
-  }
-  err := os.RemoveAll(cache.directoryName) 
-  if err != nil { 
-    log.Fatal("Failed to remove cache directory %s (%s).", cache.directoryName, err.Error()) 
-  }
+	if _, err := os.Stat(cache.directoryName); err != nil {
+		if !os.IsNotExist(err) {
+			log.Fatal("Failed to find cache directory %s (%s).", cache.directoryName, err.Error())
+		}
+		return
+	}
+	err := os.RemoveAll(cache.directoryName)
+	if err != nil {
+		log.Fatal("Failed to remove cache directory %s (%s).", cache.directoryName, err.Error())
+	}
 }
 
 func (cache Cache) imagePath(checksum string, width int) string {

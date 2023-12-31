@@ -12,44 +12,44 @@ import (
 type Config map[string]interface{}
 
 type ExtractOption struct {
-  ThumbnailWidth int
-  OriginalWidth int
+	ThumbnailWidth int
+	OriginalWidth  int
 }
 
 var (
-	once sync.Once
+	once     sync.Once
 	instance Config
 )
 
 func Shared() Config {
 	once.Do(func() {
-    instance = New("./foto.toml")
+		instance = New("./foto.toml")
 	})
 
 	return instance
 }
 
 func New(file string) Config {
-		v := viper.New()
-    v.SetConfigFile(file)
+	v := viper.New()
+	v.SetConfigFile(file)
 
-		err := v.ReadInConfig()
-		utils.CheckFatalError(err, "Failed to parse config file foto.toml")
+	err := v.ReadInConfig()
+	utils.CheckFatalError(err, "Failed to parse config file foto.toml")
 
-		instance = loadConfig(v)
+	instance = loadConfig(v)
 
-    instance["PhotoSwipeVersion"] = constants.PhotoSwipeVersion
-		v.WatchConfig()
+	instance["PhotoSwipeVersion"] = constants.PhotoSwipeVersion
+	v.WatchConfig()
 
-    return instance
+	return instance
 }
 
 func (cfg Config) GetExtractOption() ExtractOption {
-  imageOptions := cfg["image"].(map[string]interface{})
-	return ExtractOption {
-    ThumbnailWidth: int(imageOptions["thumbnailwidth"].(int64)),
-    OriginalWidth: int(imageOptions["originalwidth"].(int64)),
-  }
+	imageOptions := cfg["image"].(map[string]interface{})
+	return ExtractOption{
+		ThumbnailWidth: int(imageOptions["thumbnailwidth"].(int64)),
+		OriginalWidth:  int(imageOptions["originalwidth"].(int64)),
+	}
 }
 
 func (cfg Config) OtherFolders() []string {
