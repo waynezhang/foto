@@ -49,3 +49,9 @@ var (
 	Collection2FileName2 = "2023-04-29.jpg"
 	Collection2FileName3 = "2023-09-28.jpg"
 )
+
+var (
+	RotatedImageFile   = "../../testdata/rotated.jpg"
+	RotatedImageWidth  = 640
+	RotatedImageHeight = 480
+)

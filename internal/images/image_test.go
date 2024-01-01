@@ -47,3 +47,17 @@ func TestResizeImage(t *testing.T) {
 	checksum, err := files.Checksum(path)
 	assert.Equal(t, testdata.ExpectedThubmnailChecksum, *checksum)
 }
+
+func TestResizeWithRotation(t *testing.T) {
+	tmp, err := os.MkdirTemp("", "foto-test")
+	assert.Nil(t, err)
+
+	path := filepath.Join(tmp, "resized.jpg")
+
+	err = ResizeImage(testdata.RotatedImageFile, path, testdata.ThumbnailWidth)
+	assert.Nil(t, err)
+
+	size, _ := GetPhotoSize(path)
+	assert.Equal(t, testdata.RotatedImageWidth, size.Width)
+	assert.Equal(t, testdata.RotatedImageHeight, size.Height)
+}
