@@ -159,6 +159,16 @@ It's also possible to add additional settings in `foto.toml` ([ref](https://toml
 
 # Changelogs
 
+## v1.0.8
+
+- f378beb fix(export): add error handling for duplicated slugs (Fix #4)
+- Big refactoring
+- Add tests
+
+### BREAKING CHANGE
+
+`PhotoSwipeVersion` variable in lower case `photoswipeversion` now.
+
 ## v1.0.7
 
 `.Config.PhotoSwipeVersion` is available in [template](https://github.com/waynezhang/foto/commit/41ffd5adea5bd056c0445bfe8a42e93eb16d6602).
