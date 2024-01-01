@@ -27,6 +27,11 @@ func TestGetPhotoSize(t *testing.T) {
 	assert.True(t, os.IsNotExist(err))
 }
 
+func TestAspectedHeight(t *testing.T) {
+	assert.Equal(t, 200, AspectedHeight(ImageSize{200, 200}, 200))
+	assert.Equal(t, 100, AspectedHeight(ImageSize{2048, 1024}, 200))
+}
+
 func TestResizeImage(t *testing.T) {
 	tmp, err := os.MkdirTemp("", "foto-test")
 	assert.Nil(t, err)

@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/images"
+	"github.com/waynezhang/foto/internal/indexer"
 	"github.com/waynezhang/foto/internal/log"
 	"github.com/waynezhang/foto/internal/url"
 	"github.com/waynezhang/foto/internal/utils"
@@ -33,18 +33,12 @@ func preview(cmd *cobra.Command, args []string) {
 	log.Debug("Creating Preview...")
 
 	config := config.Shared()
-	extractor := images.NewExtractor(
-		config.GetSectionMetadata(),
-		config.GetExtractOption(),
-		nil,
-		cache.Shared(),
-		nil,
-	)
+	index := indexer.Build(config.GetSectionMetadata(), config.GetExtractOption())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handleRoot(
 			config,
-			extractor.ExtractPhotos(),
+			index,
 			w,
 			r,
 		)
@@ -54,7 +48,7 @@ func preview(cmd *cobra.Command, args []string) {
 		handleImage(
 			strings.TrimPrefix(r.URL.Path, url.PhotosPath),
 			config,
-			extractor.ExtractPhotos(),
+			index,
 			w,
 			r,
 		)
@@ -72,18 +66,18 @@ func preview(cmd *cobra.Command, args []string) {
 	utils.CheckFatalError(err, "Failed to listen the port")
 }
 
-func handleRoot(cfg map[string]interface{}, sections []images.Section, w http.ResponseWriter, r *http.Request) {
+func handleRoot(cfg map[string]interface{}, sections []indexer.Section, w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles(constants.TemplateFilePath))
 	_ = tmpl.Execute(w, struct {
 		Config   map[string]interface{}
-		Sections []images.Section
+		Sections []indexer.Section
 	}{
 		cfg,
 		sections,
 	})
 }
 
-func handleImage(path string, cfg map[string]interface{}, sections []images.Section, w http.ResponseWriter, r *http.Request) {
+func handleImage(path string, cfg map[string]interface{}, sections []indexer.Section, w http.ResponseWriter, r *http.Request) {
 	comps := strings.Split(path, "/")
 	if len(comps) != 3 {
 		http.NotFound(w, r)

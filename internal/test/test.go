@@ -36,3 +36,16 @@ var (
 	Collection1ThumbnailChecksum3 = "d55eeeb2e0b1f91d98c8d22cefafaf061aba26f79402dc7c95c68869049ba643"
 	Collection1OriginalChecksum3  = "10ea1324b019eeb47a8ba608c470c0e55df6aa95076c752ea413fcf9060180da"
 )
+
+var (
+	Collection2 = map[string]interface{}{
+		"title":  "Section 2",
+		"text":   "This is Section 2",
+		"slug":   "slug-section-2",
+		"folder": "../../testdata/collection-2",
+	}
+
+	Collection2FileName1 = "2022-09-20.jpg"
+	Collection2FileName2 = "2023-04-29.jpg"
+	Collection2FileName3 = "2023-09-28.jpg"
+)

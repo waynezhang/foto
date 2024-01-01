@@ -42,6 +42,11 @@ func GetPhotoSize(path string) (*ImageSize, error) {
 	}, nil
 }
 
+func AspectedHeight(size ImageSize, width int) int {
+	ratio := float32(size.Height) / float32(size.Width)
+	return int(float32(width) * ratio)
+}
+
 func ResizeImage(src string, to string, width int) error {
 	log.Debug("Resizing %s to %d", src, width)
 	data, err := ResizeData(src, width)
