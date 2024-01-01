@@ -1,6 +1,7 @@
 package indexer
 
 import (
+	"fmt"
 	"html/template"
 	"os"
 	"path/filepath"
@@ -28,23 +29,31 @@ type ImageSet struct {
 	OriginalSize  ImageSize
 }
 
-func Build(metadata []config.SectionMetadata, option config.ExtractOption) []Section {
+func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Section, error) {
 	sections := []Section{}
+	slugs := map[string]bool{}
+
 	for _, val := range metadata {
+		slug := val.Slug
+		if slugs[slug] {
+			return nil, fmt.Errorf("Slug \"%s\" already exists. Slug needs to be unique.", slug)
+		}
+
+		log.Debug("Extacting section [%s][/%s] %s", val.Title, val.Slug, val.Folder)
 		s := Section{
 			Title:     val.Title,
 			Text:      val.Text,
-			Slug:      val.Slug,
+			Slug:      slug,
 			Folder:    val.Folder,
 			Ascending: val.Ascending,
 			ImageSets: buildImageSets(val.Folder, val.Ascending, option),
 		}
-		log.Debug("Extacting section [%s][/%s] %s", val.Title, val.Slug, val.Folder)
+		slugs[slug] = true
 
 		sections = append(sections, s)
 	}
 
-	return sections
+	return sections, nil
 }
 
 func buildImageSets(folder string, ascending bool, option config.ExtractOption) []ImageSet {

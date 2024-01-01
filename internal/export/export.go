@@ -25,7 +25,7 @@ type ProgressFunc func(path string)
 
 type Context interface {
 	cleanDirectory(outputPath string) error
-	buildIndex(cfg config.Config) []indexer.Section
+	buildIndex(cfg config.Config) ([]indexer.Section, error)
 	exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc)
 	generateIndexHtml(cfg config.Config, sections []indexer.Section, path string, minimize bool)
 	processOtherFolders(folders []string, outputPath string, minimize bool, messageFunc func(src string, dst string))
@@ -59,7 +59,12 @@ func export(cfg config.Config, outputPath string, minimize bool, cache cache.Cac
 
 	spinnerMsg("Building index %s", outputPath)
 	photosDirectory := files.OutputPhotosFilePath(outputPath)
-	section := ctx.buildIndex(cfg)
+	section, err := ctx.buildIndex(cfg)
+	if err != nil {
+		ctx.cleanDirectory(outputPath)
+		utils.CheckFatalError(err, "Failed t build index.")
+	}
+
 	ctx.exportPhotos(section, photosDirectory, cache, func(path string) {
 		spinnerMsg("%s", path)
 	})
@@ -84,7 +89,7 @@ func (ctx DefaultExportContext) cleanDirectory(outputPath string) error {
 	return files.PruneDirectory(outputPath)
 }
 
-func (ctx DefaultExportContext) buildIndex(cfg config.Config) []indexer.Section {
+func (ctx DefaultExportContext) buildIndex(cfg config.Config) ([]indexer.Section, error) {
 	return indexer.Build(cfg.GetSectionMetadata(), cfg.GetExtractOption())
 }
 

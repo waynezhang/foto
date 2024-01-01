@@ -40,8 +40,17 @@ func (m *MockContext) cleanDirectory(outputPath string) error {
 	return m.Called(outputPath).Error(0)
 }
 
-func (m *MockContext) buildIndex(cfg config.Config) []indexer.Section {
-	return m.Called(cfg).Get(0).([]indexer.Section)
+func (m *MockContext) buildIndex(cfg config.Config) ([]indexer.Section, error) {
+	args := m.Called(cfg)
+	var sections []indexer.Section
+	var err error
+	if args.Get(0) != nil {
+		sections = args.Get(0).([]indexer.Section)
+	}
+	if args.Get(1) != nil {
+		err = args.Get(1).(error)
+	}
+	return sections, err
 }
 
 func (m *MockContext) exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc) {
@@ -104,7 +113,7 @@ func TestExportPhotos(t *testing.T) {
 
 	mockCtx := new(MockContext)
 	mockCtx.On("cleanDirectory", mock.Anything).Return(nil)
-	mockCtx.On("buildIndex", mock.Anything).Return(sections)
+	mockCtx.On("buildIndex", mock.Anything).Return(sections, nil)
 	mockCtx.On("exportPhotos", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 	mockCtx.On("generateIndexHtml", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 	mockCtx.On("processOtherFolders", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()

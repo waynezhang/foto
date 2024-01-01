@@ -26,7 +26,7 @@ func TestBuild(t *testing.T) {
 
 	data := []config.SectionMetadata{meta1, meta2}
 
-	sections := Build(data, defaultOption)
+	sections, _ := Build(data, defaultOption)
 	assert.Equal(t, 2, len(sections))
 	assert.Equal(t, testdata.Collection1["title"], sections[0].Title)
 
@@ -36,6 +36,19 @@ func TestBuild(t *testing.T) {
 	assert.Equal(t, testdata.Collection1FileName3, sections[0].ImageSets[0].FileName)
 	assert.Equal(t, 3, len(sections[1].ImageSets))
 	assert.Equal(t, testdata.Collection2FileName3, sections[1].ImageSets[0].FileName)
+}
+
+func TestBuildDuplicatedSlugs(t *testing.T) {
+	var meta1 config.SectionMetadata
+	var meta2 config.SectionMetadata
+	mapstructure.Decode(testdata.Collection1, &meta1)
+	mapstructure.Decode(testdata.Collection2, &meta2)
+	meta2.Slug = meta1.Slug
+
+	data := []config.SectionMetadata{meta1, meta2}
+
+	_, err := Build(data, defaultOption)
+	assert.NotNil(t, err)
 }
 
 func TestBuildImageSets(t *testing.T) {

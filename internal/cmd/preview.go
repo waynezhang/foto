@@ -33,7 +33,8 @@ func preview(cmd *cobra.Command, args []string) {
 	log.Debug("Creating Preview...")
 
 	config := config.Shared()
-	index := indexer.Build(config.GetSectionMetadata(), config.GetExtractOption())
+	index, err := indexer.Build(config.GetSectionMetadata(), config.GetExtractOption())
+	utils.CheckFatalError(err, "Failed to build index")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handleRoot(
@@ -62,7 +63,7 @@ func preview(cmd *cobra.Command, args []string) {
 	}
 
 	log.Info("Server started -> http://localhost:%d", port)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	utils.CheckFatalError(err, "Failed to listen the port")
 }
 
