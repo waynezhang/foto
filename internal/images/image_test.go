@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/waynezhang/foto/internal/files"
-	"github.com/waynezhang/foto/internal/test"
+	"github.com/waynezhang/foto/internal/testdata"
 )
 
 func TestPhotoSupport(t *testing.T) {
@@ -17,10 +17,10 @@ func TestPhotoSupport(t *testing.T) {
 }
 
 func TestGetPhotoSize(t *testing.T) {
-	size, err := GetPhotoSize(test.Testfile)
+	size, err := GetPhotoSize(testdata.Testfile)
 	assert.Nil(t, err)
-	assert.Equal(t, test.TestfileWidth, size.Width)
-	assert.Equal(t, test.TestfileHeight, size.Height)
+	assert.Equal(t, testdata.TestfileWidth, size.Width)
+	assert.Equal(t, testdata.TestfileHeight, size.Height)
 
 	_, err = GetPhotoSize("nonexisting-file.jpg")
 	assert.True(t, os.IsNotExist(err))
@@ -37,13 +37,13 @@ func TestResizeImage(t *testing.T) {
 
 	path := filepath.Join(tmp, "resized.jpg")
 
-	err = ResizeImage("nonexisting-file.jpg", path, test.ThumbnailWidth)
+	err = ResizeImage("nonexisting-file.jpg", path, testdata.ThumbnailWidth)
 	assert.True(t, os.IsNotExist(err))
 	assert.False(t, files.IsExisting(path))
 
-	err = ResizeImage(test.Testfile, path, test.ThumbnailWidth)
+	err = ResizeImage(testdata.Testfile, path, testdata.ThumbnailWidth)
 	assert.Nil(t, err)
 
 	checksum, err := files.Checksum(path)
-	assert.Equal(t, test.ExpectedThubmnailChecksum, *checksum)
+	assert.Equal(t, testdata.ExpectedThubmnailChecksum, *checksum)
 }

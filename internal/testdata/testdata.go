@@ -1,4 +1,4 @@
-package test
+package testdata
 
 const (
 	Testfile         = "../../testdata/collection-1/2022-06-29.jpg"
