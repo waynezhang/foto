@@ -1,6 +1,7 @@
 package config
 
 import (
+	"html/template"
 	"sync"
 
 	"github.com/spf13/viper"
@@ -23,7 +24,7 @@ type ExtractOption struct {
 
 type SectionMetadata struct {
 	Title     string
-	Text      string
+	Text      template.HTML
 	Slug      string
 	Folder    string
 	Ascending bool

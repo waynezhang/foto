@@ -1,6 +1,7 @@
 package indexer
 
 import (
+	"html/template"
 	"os"
 	"path/filepath"
 	"sort"
@@ -12,7 +13,7 @@ import (
 
 type Section struct {
 	Title     string
-	Text      string
+	Text      template.HTML
 	Slug      string
 	Folder    string
 	Ascending bool

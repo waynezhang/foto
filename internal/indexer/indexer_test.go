@@ -1,6 +1,7 @@
 package indexer
 
 import (
+	"html/template"
 	"path/filepath"
 	"testing"
 
@@ -22,10 +23,14 @@ func TestBuild(t *testing.T) {
 	var meta2 config.SectionMetadata
 	mapstructure.Decode(testdata.Collection1, &meta1)
 	mapstructure.Decode(testdata.Collection2, &meta2)
+
 	data := []config.SectionMetadata{meta1, meta2}
+
 	sections := Build(data, defaultOption)
 	assert.Equal(t, 2, len(sections))
 	assert.Equal(t, testdata.Collection1["title"], sections[0].Title)
+
+	assert.Equal(t, template.HTML("This is Section 1"), sections[0].Text)
 
 	assert.Equal(t, 3, len(sections[0].ImageSets))
 	assert.Equal(t, testdata.Collection1FileName3, sections[0].ImageSets[0].FileName)
