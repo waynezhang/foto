@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/waynezhang/foto/internal/cache"
+	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/test"
-	"github.com/waynezhang/foto/internal/utils"
 )
 
 func TestResizeImageCache(t *testing.T) {
@@ -20,7 +20,7 @@ func TestResizeImageCache(t *testing.T) {
 	_ = resizeImageAndCache(test.Testfile, filepath.Join(tmp, "resized.jpg"), test.ThumbnailWidth, cache)
 
 	image := cache.CachedImage(test.Testfile, test.ThumbnailWidth)
-	checksum, _ := utils.FileChecksum(*image)
+	checksum, _ := files.Checksum(*image)
 	assert.Equal(t, test.ExpectedThubmnailChecksum, *checksum)
 }
 

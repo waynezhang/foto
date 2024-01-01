@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/waynezhang/foto/internal/constants"
+	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/test"
-	"github.com/waynezhang/foto/internal/utils"
 )
 
 func TestCache(t *testing.T) {
@@ -28,7 +28,7 @@ func TestCache(t *testing.T) {
 	expectedPath := fmt.Sprintf("%s/%s-640", dirName, test.ExpectedChecksum)
 	assert.Equal(t, expectedPath, *img)
 
-	resizedChecksum, _ := utils.FileChecksum(expectedPath)
+	resizedChecksum, _ := files.Checksum(expectedPath)
 	assert.Equal(t, test.ExpectedThubmnailChecksum, *resizedChecksum)
 
 	instance.Clear()

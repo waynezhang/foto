@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/test"
-	"github.com/waynezhang/foto/internal/utils"
 )
 
 func TestPhotoSupport(t *testing.T) {
@@ -45,6 +44,6 @@ func TestResizeImage(t *testing.T) {
 	err = ResizeImage(test.Testfile, path, test.ThumbnailWidth)
 	assert.Nil(t, err)
 
-	checksum, err := utils.FileChecksum(path)
+	checksum, err := files.Checksum(path)
 	assert.Equal(t, test.ExpectedThubmnailChecksum, *checksum)
 }

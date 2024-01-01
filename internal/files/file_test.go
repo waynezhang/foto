@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/waynezhang/foto/internal/test"
 )
 
 func TestWriteData(t *testing.T) {
@@ -21,4 +22,14 @@ func TestWriteData(t *testing.T) {
 	bytes, err := os.ReadFile(file)
 	assert.Nil(t, err)
 	assert.Equal(t, testdata, bytes)
+}
+
+func TestCheckSum(t *testing.T) {
+	s1, err := Checksum(test.Testfile)
+	assert.Nil(t, err)
+	assert.Equal(t, test.ExpectedChecksum, *s1)
+
+	s2, err := Checksum("nonexisting-file")
+	assert.Nil(t, s2)
+	assert.NotNil(t, err)
 }

@@ -9,7 +9,6 @@ import (
 	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/log"
-	"github.com/waynezhang/foto/internal/utils"
 )
 
 type Cache struct {
@@ -36,7 +35,7 @@ func New(directoryName string) Cache {
 
 // `src` is used to compute checksum, `file` will be copied to the cache
 func (cache Cache) AddImage(src string, width int, file string) {
-	checksum, err := utils.FileChecksum(src)
+	checksum, err := files.Checksum(src)
 	if err != nil {
 		return
 	}
@@ -52,7 +51,7 @@ func (cache Cache) AddImage(src string, width int, file string) {
 }
 
 func (cache Cache) CachedImage(src string, width int) *string {
-	checksum, err := utils.FileChecksum(src)
+	checksum, err := files.Checksum(src)
 	if err != nil {
 		log.Fatal("Failed to generate file hash %s (%s).", src, err.Error())
 		return nil
