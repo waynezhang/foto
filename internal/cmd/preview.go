@@ -54,7 +54,7 @@ func preview(cmd *cobra.Command, args []string) {
 		)
 	})
 
-	otherFolders := config.OtherFolders()
+	otherFolders := config.GetOtherFolders()
 	for _, folder := range otherFolders {
 		dir := http.FileServer(http.Dir(folder))
 		path := "/" + folder + "/"
@@ -66,18 +66,18 @@ func preview(cmd *cobra.Command, args []string) {
 	utils.CheckFatalError(err, "Failed to listen the port")
 }
 
-func handleRoot(cfg map[string]interface{}, sections []indexer.Section, w http.ResponseWriter, r *http.Request) {
+func handleRoot(cfg config.Config, sections []indexer.Section, w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles(constants.TemplateFilePath))
 	_ = tmpl.Execute(w, struct {
 		Config   map[string]interface{}
 		Sections []indexer.Section
 	}{
-		cfg,
+		cfg.AllSettings(),
 		sections,
 	})
 }
 
-func handleImage(path string, cfg map[string]interface{}, sections []indexer.Section, w http.ResponseWriter, r *http.Request) {
+func handleImage(path string, cfg config.Config, sections []indexer.Section, w http.ResponseWriter, r *http.Request) {
 	comps := strings.Split(path, "/")
 	if len(comps) != 3 {
 		http.NotFound(w, r)
@@ -97,8 +97,16 @@ func handleImage(path string, cfg map[string]interface{}, sections []indexer.Sec
 		return
 	}
 
-	key := comps[1] + "width"
-	width := cfg["image"].(map[string]interface{})[key].(int64)
+	key := comps[1]
+	var width int
+	if key == "thumbnail" {
+		width = cfg.GetExtractOption().ThumbnailWidth
+	} else if key == "original" {
+		width = cfg.GetExtractOption().OriginalWidth
+	} else {
+		http.NotFound(w, r)
+		return
+	}
 	data, err := images.ResizeData(*dir+"/"+comps[2], int(width))
 	if err != nil {
 		http.NotFound(w, r)

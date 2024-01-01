@@ -1,7 +1,6 @@
 package indexer
 
 import (
-	"html/template"
 	"os"
 	"path/filepath"
 	"sort"
@@ -12,12 +11,12 @@ import (
 )
 
 type Section struct {
-	Title       string
-	Text        template.HTML
-	Slug        string
-	Folder      string
-	IsAscending bool
-	ImageSets   []ImageSet
+	Title     string
+	Text      string
+	Slug      string
+	Folder    string
+	Ascending bool
+	ImageSets []ImageSet
 }
 
 type ImageSize images.ImageSize
@@ -31,35 +30,20 @@ type ImageSet struct {
 func Build(metadata []config.SectionMetadata, option config.ExtractOption) []Section {
 	sections := []Section{}
 	for _, val := range metadata {
-		s := parseSection(val)
-		s.ImageSets = buildImageSets(s.Folder, s.IsAscending, option)
-		log.Debug("Extacting section [%s][/%s] %s", s.Title, s.Slug, s.Folder)
+		s := Section{
+			Title:     val.Title,
+			Text:      val.Text,
+			Slug:      val.Slug,
+			Folder:    val.Folder,
+			Ascending: val.Ascending,
+			ImageSets: buildImageSets(val.Folder, val.Ascending, option),
+		}
+		log.Debug("Extacting section [%s][/%s] %s", val.Title, val.Slug, val.Folder)
 
 		sections = append(sections, s)
 	}
 
 	return sections
-}
-
-func parseSection(info config.SectionMetadata) Section {
-	title := info["title"].(string)
-	text := template.HTML(info["text"].(string))
-	slug := info["slug"].(string)
-	folder := info["folder"].(string)
-
-	ascending := false
-	if v := info["ascending"]; v != nil {
-		ascending = v.(bool)
-	}
-
-	return Section{
-		title,
-		text,
-		slug,
-		folder,
-		ascending,
-		nil,
-	}
 }
 
 func buildImageSets(folder string, ascending bool, option config.ExtractOption) []ImageSet {

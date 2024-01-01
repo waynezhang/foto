@@ -9,14 +9,25 @@ import (
 	"github.com/waynezhang/foto/internal/utils"
 )
 
-type Config map[string]interface{}
+type Config interface {
+	GetSectionMetadata() []SectionMetadata
+	GetExtractOption() ExtractOption
+	GetOtherFolders() []string
+	AllSettings() map[string]interface{}
+}
 
 type ExtractOption struct {
 	ThumbnailWidth int
 	OriginalWidth  int
 }
 
-type SectionMetadata map[string]interface{}
+type SectionMetadata struct {
+	Title     string
+	Text      string
+	Slug      string
+	Folder    string
+	Ascending bool
+}
 
 var (
 	once     sync.Once
@@ -25,65 +36,54 @@ var (
 
 func Shared() Config {
 	once.Do(func() {
-		instance = New("./foto.toml")
+		instance = NewFileConfig("./foto.toml")
 	})
 
 	return instance
 }
 
-func New(file string) Config {
+// File Config
+
+type FileConfig struct {
+	v            *viper.Viper
+	option       ExtractOption
+	sections     []SectionMetadata
+	otherFolders []string
+}
+
+func NewFileConfig(file string) Config {
 	v := viper.New()
 	v.SetConfigFile(file)
 
 	err := v.ReadInConfig()
 	utils.CheckFatalError(err, "Failed to parse config file foto.toml")
 
-	instance = loadConfig(v)
+	// Inject PhotoSwipeVersion
+	v.Set("PhotoSwipeVersion", constants.PhotoSwipeVersion)
 
-	instance["PhotoSwipeVersion"] = constants.PhotoSwipeVersion
-	v.WatchConfig()
+	config := FileConfig{v: v}
 
-	return instance
+	v.UnmarshalKey("section", &config.sections)
+	v.UnmarshalKey("image", &config.option)
+	v.UnmarshalKey("others.folders", &config.otherFolders)
+
+	log.Debug("Config parsed: %v", config)
+
+	return config
 }
 
-func (cfg Config) GetSectionMetadata() []SectionMetadata {
-	metadata := []SectionMetadata{}
-
-	sections := cfg["section"].([]any)
-	if sections == nil {
-		return metadata
-	}
-
-	for _, v := range sections {
-		metadata = append(metadata, (v.(map[string]interface{})))
-	}
-	return metadata
+func (cfg FileConfig) GetSectionMetadata() []SectionMetadata {
+	return cfg.sections
 }
 
-func (cfg Config) GetExtractOption() ExtractOption {
-	imageOptions := cfg["image"].(map[string]interface{})
-	return ExtractOption{
-		ThumbnailWidth: int(imageOptions["thumbnailwidth"].(int64)),
-		OriginalWidth:  int(imageOptions["originalwidth"].(int64)),
-	}
+func (cfg FileConfig) GetExtractOption() ExtractOption {
+	return cfg.option
 }
 
-func (cfg Config) OtherFolders() []string {
-	others := cfg["others"]
-	if others == nil {
-		return nil
-	}
-
-	folders := others.(map[string]interface{})["folders"].([]interface{})
-	ret := make([]string, len(folders))
-	for i, v := range folders {
-		ret[i] = v.(string)
-	}
-	return ret
+func (cfg FileConfig) GetOtherFolders() []string {
+	return cfg.otherFolders
 }
 
-func loadConfig(v *viper.Viper) Config {
-	cfg := v.AllSettings()
-	log.Debug("Config parsed: %v", cfg)
-	return cfg
+func (cfg FileConfig) AllSettings() map[string]interface{} {
+	return cfg.v.AllSettings()
 }

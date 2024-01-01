@@ -14,7 +14,7 @@
     {{- if .Config.site.description }}
     <meta property="og:description" content="{{ .Config.site.description }}">
     {{- end }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.PhotoSwipeVersion }}/photoswipe.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.photoswipeversion }}/photoswipe.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
     <link rel="stylesheet" href="assets/style.css">
   </head>
@@ -80,8 +80,8 @@
       (new JustifiedGrid(".section-images-{{ .Slug }}", options)).renderItems();
       {{- end }}
 
-      import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.PhotoSwipeVersion }}/photoswipe-lightbox.esm.min.js';
-      import PhotoSwipe from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.PhotoSwipeVersion }}/photoswipe.esm.min.js';
+      import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.photoswipeversion }}/photoswipe-lightbox.esm.min.js';
+      import PhotoSwipe from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.photoswipeversion }}/photoswipe.esm.min.js';
 
       const lightbox = new PhotoSwipeLightbox({
         pswpModule: PhotoSwipe,

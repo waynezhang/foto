@@ -14,6 +14,24 @@ import (
 	"github.com/waynezhang/foto/internal/testdata"
 )
 
+type MockConfig struct {
+	mock.Mock
+}
+
+func (m *MockConfig) GetSectionMetadata() []config.SectionMetadata {
+	return m.Called().Get(0).([]config.SectionMetadata)
+}
+
+func (m *MockConfig) GetOtherFolders() []string {
+	return m.Called().Get(0).([]string)
+}
+func (m *MockConfig) GetExtractOption() config.ExtractOption {
+	return m.Called().Get(0).(config.ExtractOption)
+}
+func (m *MockConfig) AllSettings() map[string]interface{} {
+	return m.Called().Get(0).(map[string]interface{})
+}
+
 type MockContext struct {
 	mock.Mock
 }
@@ -44,11 +62,11 @@ func TestExportPhotos(t *testing.T) {
 
 	sections := []indexer.Section{
 		{
-			Title:       "Section 1",
-			Text:        "A description",
-			Slug:        "slug-1",
-			Folder:      "folder-1",
-			IsAscending: true,
+			Title:     "Section 1",
+			Text:      "A description",
+			Slug:      "slug-1",
+			Folder:    "folder-1",
+			Ascending: true,
 			ImageSets: []indexer.ImageSet{
 				{
 					FileName:      "filename-1",
@@ -64,11 +82,11 @@ func TestExportPhotos(t *testing.T) {
 		},
 
 		{
-			Title:       "Section 2",
-			Text:        "A description",
-			Slug:        "slug-2",
-			Folder:      "folder-2",
-			IsAscending: true,
+			Title:     "Section 2",
+			Text:      "A description",
+			Slug:      "slug-2",
+			Folder:    "folder-2",
+			Ascending: true,
 			ImageSets: []indexer.ImageSet{
 				{
 					FileName:      "filename-3",
@@ -91,13 +109,8 @@ func TestExportPhotos(t *testing.T) {
 	mockCtx.On("generateIndexHtml", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 	mockCtx.On("processOtherFolders", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 
-	cfg := config.Config{}
-	cfg["others"] = map[string]interface{}{
-		"folders": []interface{}{
-			"folder-1",
-			"folder-2",
-		},
-	}
+	cfg := new(MockConfig)
+	cfg.On("GetOtherFolders").Return([]string{"folder-1", "folder-2"})
 	outputPath := "test-directory"
 	export(cfg, outputPath, true, cache, mockCtx)
 

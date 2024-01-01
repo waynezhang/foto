@@ -71,7 +71,7 @@ func export(cfg config.Config, outputPath string, minimize bool, cache cache.Cac
 	msgFunc := func(src string, dst string) {
 		spinnerMsg("copying folder %s to %s", src, dst)
 	}
-	ctx.processOtherFolders(cfg.OtherFolders(), outputPath, minimize, msgFunc)
+	ctx.processOtherFolders(cfg.GetOtherFolders(), outputPath, minimize, msgFunc)
 
 	_ = spinner.Stop()
 
@@ -124,7 +124,7 @@ func (ctx DefaultExportContext) generateIndexHtml(cfg config.Config, sections []
 		Config   map[string]interface{}
 		Sections []indexer.Section
 	}{
-		cfg,
+		cfg.AllSettings(),
 		sections,
 	})
 	utils.CheckFatalError(err, "Failed to generate index page.")
