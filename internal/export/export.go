@@ -23,7 +23,19 @@ import (
 
 type ProgressFunc func(path string)
 
+type Context interface {
+	cleanDirectory(outputPath string) error
+	buildIndex(cfg config.Config) []indexer.Section
+	exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc)
+	generateIndexHtml(cfg config.Config, sections []indexer.Section, path string, minimize bool)
+	processOtherFolders(folders []string, outputPath string, minimize bool, messageFunc func(src string, dst string))
+}
+
 func Export(outputPath string, minimize bool) error {
+	return export(config.Shared(), outputPath, minimize, cache.Shared(), new(DefaultExportContext))
+}
+
+func export(cfg config.Config, outputPath string, minimize bool, cache cache.Cache, ctx Context) error {
 	spinner, _ := yacspin.New(yacspin.Config{
 		Frequency:       100 * time.Millisecond,
 		CharSet:         yacspin.CharSets[14],
@@ -39,44 +51,44 @@ func Export(outputPath string, minimize bool) error {
 		spinner.Message(fmt.Sprintf(format, a...))
 	}
 
-	cfg := config.Shared()
-
 	spinnerMsg("Removing directory %s", outputPath)
-	err := cleanDirectory(outputPath)
+	err := ctx.cleanDirectory(outputPath)
 	if err != nil {
 		return err
 	}
 
 	spinnerMsg("Building index %s", outputPath)
 	photosDirectory := files.OutputPhotosFilePath(outputPath)
-	section := buildIndex(cfg)
-	exportPhotos(section, photosDirectory, cache.Shared(), func(path string) {
+	section := ctx.buildIndex(cfg)
+	ctx.exportPhotos(section, photosDirectory, cache, func(path string) {
 		spinnerMsg("%s", path)
 	})
 
 	indexPath := files.OutputIndexFilePath(outputPath)
 	log.Debug("Exporting photos to %s", indexPath)
-	generateIndexHtml(cfg, section, indexPath, minimize)
+	ctx.generateIndexHtml(cfg, section, indexPath, minimize)
 
 	msgFunc := func(src string, dst string) {
 		spinnerMsg("copying folder %s to %s", src, dst)
 	}
-	processOtherFolders(cfg.OtherFolders(), outputPath, minimize, msgFunc)
+	ctx.processOtherFolders(cfg.OtherFolders(), outputPath, minimize, msgFunc)
 
 	_ = spinner.Stop()
 
 	return nil
 }
 
-func cleanDirectory(outputPath string) error {
+type DefaultExportContext struct{}
+
+func (ctx DefaultExportContext) cleanDirectory(outputPath string) error {
 	return files.PruneDirectory(outputPath)
 }
 
-func buildIndex(cfg config.Config) []indexer.Section {
+func (ctx DefaultExportContext) buildIndex(cfg config.Config) []indexer.Section {
 	return indexer.Build(cfg.GetSectionMetadata(), cfg.GetExtractOption())
 }
 
-func exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc) {
+func (ctx DefaultExportContext) exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc) {
 	if err := files.EnsureDirectory(outputPath); err != nil {
 		utils.CheckFatalError(err, "Failed to prepare output directory")
 		return
@@ -102,7 +114,7 @@ func exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cac
 	}
 }
 
-func generateIndexHtml(cfg map[string]interface{}, sections []indexer.Section, path string, minimize bool) {
+func (ctx DefaultExportContext) generateIndexHtml(cfg config.Config, sections []indexer.Section, path string, minimize bool) {
 	f, err := os.Create(path)
 	utils.CheckFatalError(err, "Failed to create index file.")
 	defer f.Close()
@@ -119,6 +131,27 @@ func generateIndexHtml(cfg map[string]interface{}, sections []indexer.Section, p
 
 	if minimize {
 		_ = mm.MinimizeFile(path, path)
+	}
+}
+
+func (ctx DefaultExportContext) processOtherFolders(folders []string, outputPath string, minimize bool, messageFunc func(src string, dst string)) {
+	for _, folder := range folders {
+		targetFolder := filepath.Join(outputPath, folder)
+		if messageFunc != nil {
+			messageFunc(folder, targetFolder)
+		}
+
+		if err := cp.Copy(folder, targetFolder); err != nil {
+			log.Fatal("Failed to copy folder %s to %s (%s).", folder, targetFolder, err)
+		}
+		if minimize {
+			_ = filepath.WalkDir(targetFolder, func(path string, d fs.DirEntry, err error) error {
+				if mm.Minimizable(path) {
+					return mm.MinimizeFile(path, path)
+				}
+				return nil
+			})
+		}
 	}
 }
 
@@ -140,25 +173,4 @@ func resizeImageAndCache(src string, to string, width int, cache cache.Cache) er
 	cache.AddImage(src, width, to)
 
 	return nil
-}
-
-func processOtherFolders(folders []string, outputPath string, minimize bool, messageFunc func(src string, dst string)) {
-	for _, folder := range folders {
-		targetFolder := filepath.Join(outputPath, folder)
-		if messageFunc != nil {
-			messageFunc(folder, targetFolder)
-		}
-
-		if err := cp.Copy(folder, targetFolder); err != nil {
-			log.Fatal("Failed to copy folder %s to %s (%s).", folder, targetFolder, err)
-		}
-		if minimize {
-			_ = filepath.WalkDir(targetFolder, func(path string, d fs.DirEntry, err error) error {
-				if mm.Minimizable(path) {
-					return mm.MinimizeFile(path, path)
-				}
-				return nil
-			})
-		}
-	}
 }

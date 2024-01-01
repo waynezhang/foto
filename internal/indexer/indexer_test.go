@@ -79,7 +79,6 @@ func TestBuildImageSets(t *testing.T) {
 }
 
 func TestBuildImageSet(t *testing.T) {
-
 	set, _ := buildImageSet(testdata.Testfile, defaultOption)
 	assert.Equal(t, filepath.Base(testdata.Testfile), set.FileName)
 	assert.Equal(t, testdata.ThumbnailWidth, set.ThumbnailSize.Width)
