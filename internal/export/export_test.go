@@ -3,6 +3,7 @@ package export
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
@@ -13,6 +14,7 @@ import (
 	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/indexer"
+	mm "github.com/waynezhang/foto/internal/minimize"
 	"github.com/waynezhang/foto/internal/testdata"
 )
 
@@ -85,12 +87,12 @@ func (m *MockContext) exportPhotos(sections []indexer.Section, outputPath string
 	m.Called(sections, outputPath, cache, nil)
 }
 
-func (m *MockContext) generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimize bool) {
-	m.Called(cfg, templatePath, sections, path, minimize)
+func (m *MockContext) generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimizer mm.Minimizer) {
+	m.Called(cfg, templatePath, sections, path, minimizer)
 }
 
-func (m *MockContext) processOtherFolders(folders []string, outputPath string, minimize bool, messageFunc func(src string, dst string)) {
-	m.Called(folders, outputPath, minimize, nil)
+func (m *MockContext) processOtherFolders(folders []string, outputPath string, minimizer mm.Minimizer, messageFunc func(src string, dst string)) {
+	m.Called(folders, outputPath, minimizer, nil)
 }
 
 // MockFunc
@@ -104,6 +106,24 @@ func (m *MockFunc) progressFunc(path string) {
 
 func (m *MockFunc) messageFunc(src string, dst string) {
 	m.Called(src, dst)
+}
+
+// MockMinimizer
+
+type MockMinimizer struct {
+	mock.Mock
+}
+
+func (m *MockMinimizer) Minimizable(path string) bool {
+	return m.Called(path).Bool(0)
+}
+
+func (m *MockMinimizer) MinimizeFile(src string, dest string) error {
+	arg := m.Called(src, dest).Get(0)
+	if arg != nil {
+		return arg.(error)
+	}
+	return nil
 }
 
 // Tests
@@ -125,16 +145,18 @@ func TestExport(t *testing.T) {
 	mockCtx.On("generateIndexHtml", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 	mockCtx.On("processOtherFolders", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 
+	minimizer := mm.NoneMinimizer{}
+
 	cfg := new(MockConfig)
 	cfg.On("GetOtherFolders").Return([]string{"folder-1", "folder-2"})
 	outputPath := "test-directory"
-	export(cfg, outputPath, true, cache, mockCtx)
+	export(cfg, outputPath, minimizer, cache, mockCtx)
 
 	mockCtx.AssertCalled(t, "cleanDirectory", outputPath)
 	mockCtx.AssertCalled(t, "buildIndex", cfg)
 	mockCtx.AssertCalled(t, "exportPhotos", sections, filepath.Join(outputPath, "photos"), cache, nil)
-	mockCtx.AssertCalled(t, "generateIndexHtml", cfg, constants.TemplateFilePath, sections, filepath.Join(outputPath, "index.html"), true)
-	mockCtx.AssertCalled(t, "processOtherFolders", []string{"folder-1", "folder-2"}, outputPath, true, nil)
+	mockCtx.AssertCalled(t, "generateIndexHtml", cfg, constants.TemplateFilePath, sections, filepath.Join(outputPath, "index.html"), minimizer)
+	mockCtx.AssertCalled(t, "processOtherFolders", []string{"folder-1", "folder-2"}, outputPath, minimizer, nil)
 }
 
 func TestCleanDirectory(t *testing.T) {
@@ -188,15 +210,24 @@ func TestGenerateIndexHTML(t *testing.T) {
 	cfg := MockConfig{}
 	cfg.On("AllSettings").Return(map[string]interface{}{})
 
+	mockMinimizer := new(MockMinimizer)
+	mockMinimizer.On("MinimizeFile", mock.Anything, mock.Anything).Return(nil)
+
 	ctx := DefaultExportContext{}
-	ctx.generateIndexHtml(&cfg, testdata.TestHtmlFile, sections, path, true)
+	ctx.generateIndexHtml(&cfg, testdata.TestHtmlFile, sections, path, mockMinimizer)
 	assert.True(t, files.IsExisting(path))
 	cfg.AssertCalled(t, "AllSettings")
+
+	mockMinimizer.AssertCalled(t, "MinimizeFile", mock.Anything, mock.Anything)
 }
 
 func TestProcessOtherFolders(t *testing.T) {
 	tmp, _ := prepareTempDirAndCache(t)
 	defer os.RemoveAll(tmp)
+
+	mockMinimizer := new(MockMinimizer)
+	mockMinimizer.On("Minimizable", mock.Anything).Return(true)
+	mockMinimizer.On("MinimizeFile", mock.Anything, mock.Anything).Return(nil)
 
 	mockFunc := new(MockFunc)
 	mockFunc.On("messageFunc", mock.Anything, mock.Anything).Return(nil)
@@ -209,7 +240,7 @@ func TestProcessOtherFolders(t *testing.T) {
 	new(DefaultExportContext).processOtherFolders([]string{
 		collection1Folder,
 		collection2Folder,
-	}, tmp, true, messageFunc)
+	}, tmp, mockMinimizer, messageFunc)
 
 	file1 := filepath.Join(tmp, collection1Folder, testdata.Collection1FileName1)
 	file2 := filepath.Join(tmp, collection2Folder, testdata.Collection2FileName1)
@@ -217,6 +248,9 @@ func TestProcessOtherFolders(t *testing.T) {
 	assert.True(t, true, files.IsExisting(file2))
 
 	mockFunc.AssertNumberOfCalls(t, "messageFunc", 2) // 2 folders
+
+	mockMinimizer.AssertCalled(t, "Minimizable", mock.Anything)
+	mockMinimizer.AssertCalled(t, "MinimizeFile", mock.Anything, mock.Anything)
 }
 
 func TestResizeImageCache(t *testing.T) {
@@ -249,6 +283,11 @@ func TestResizeImageCache(t *testing.T) {
 	assert.Nil(t, err)
 	cache2.AssertCalled(t, "CachedImage", src, width)
 	cache2.AssertNotCalled(t, "AddImage", src, width, dst)
+}
+
+func TestMinimizer(t *testing.T) {
+	assert.Equal(t, reflect.TypeOf(mm.NoneMinimizer{}), reflect.TypeOf(minimizer(false)))
+	assert.Equal(t, reflect.TypeOf(mm.MinifyMinimizer{}), reflect.TypeOf(minimizer(true)))
 }
 
 // helper func
