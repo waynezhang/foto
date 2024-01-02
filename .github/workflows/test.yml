@@ -14,5 +14,14 @@ jobs:
         with:
           go-version: 1.21.5
 
+      - name: Prepare tparse
+        run: |
+          go install github.com/mfridman/tparse@latest
+
       - name: Run tests
-        uses: robherley/go-test-action@v0.1.0
+        run: |
+          go test ./... -json -cover | tee ./go-test.out | tparse -all
+
+      - name: Add Summary
+        run: |
+          tparse -file ./go-test.out -format markdown >> $GITHUB_STEP_SUMMARY
