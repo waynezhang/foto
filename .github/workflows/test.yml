@@ -24,4 +24,4 @@ jobs:
 
       - name: Add Summary
         run: |
-          tparse -file ./go-test.out -format markdown >> $GITHUB_STEP_SUMMARY
+          tparse -file ./go-test.out -all -format markdown >> $GITHUB_STEP_SUMMARY
