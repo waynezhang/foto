@@ -12,12 +12,29 @@ import (
 	"github.com/tdewolff/minify/v2/js"
 )
 
-func Minimizable(path string) bool {
+type Minimizer interface {
+	Minimizable(path string) bool
+	MinimizeFile(src string, dest string) error
+}
+
+type NoneMinimizer struct{}
+
+func (m NoneMinimizer) Minimizable(path string) bool {
+	return true
+}
+
+func (m NoneMinimizer) MinimizeFile(src string, dest string) error {
+	return nil
+}
+
+type MinifyMinimizer struct{}
+
+func (m MinifyMinimizer) Minimizable(path string) bool {
 	ext := filepath.Ext(path)
 	return ext == ".css" || ext == ".html" || ext == ".js"
 }
 
-func MinimizeFile(src string, dest string) error {
+func (m MinifyMinimizer) MinimizeFile(src string, dest string) error {
 	var (
 		buf bytes.Buffer
 		err error
