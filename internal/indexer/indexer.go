@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 
 	"github.com/waynezhang/foto/internal/config"
@@ -35,6 +36,9 @@ func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Se
 
 	for _, val := range metadata {
 		slug := val.Slug
+		if !validSlug(slug) {
+			return nil, fmt.Errorf("Slug \"%s\" is invalid. Only letters([a-zA-Z]), numbers([09-]), underscore(_) and hyphen(-) can be used.", slug)
+		}
 		if slugs[slug] {
 			return nil, fmt.Errorf("Slug \"%s\" already exists. Slug needs to be unique.", slug)
 		}
@@ -112,4 +116,9 @@ func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) 
 			originalHeight,
 		},
 	}, nil
+}
+
+func validSlug(slug string) bool {
+	matched, _ := regexp.MatchString("^[a-zA-Z0-9-_]+$", slug)
+	return matched
 }
