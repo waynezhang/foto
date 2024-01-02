@@ -33,9 +33,9 @@ func TestBuild(t *testing.T) {
 	assert.Equal(t, template.HTML("This is Section 1"), sections[0].Text)
 
 	assert.Equal(t, 3, len(sections[0].ImageSets))
-	assert.Equal(t, testdata.Collection1FileName3, sections[0].ImageSets[0].FileName)
+	assert.Equal(t, testdata.Collection1FileName1, sections[0].ImageSets[0].FileName)
 	assert.Equal(t, 3, len(sections[1].ImageSets))
-	assert.Equal(t, testdata.Collection2FileName3, sections[1].ImageSets[0].FileName)
+	assert.Equal(t, testdata.Collection2FileName1, sections[1].ImageSets[0].FileName)
 }
 
 func TestBuildDuplicatedSlugs(t *testing.T) {

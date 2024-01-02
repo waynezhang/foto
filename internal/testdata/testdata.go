@@ -28,10 +28,28 @@ const (
 
 var (
 	Collection1 = map[string]interface{}{
-		"title":  "Section 1",
-		"text":   "This is Section 1",
-		"slug":   "slug-section-1",
-		"folder": "../../testdata/collection-1",
+		"title":     "Section 1",
+		"text":      "This is Section 1",
+		"slug":      "slug-section-1",
+		"folder":    "../../testdata/collection-1",
+		"ascending": true,
+		"imageSets": []map[string]interface{}{
+			{
+				"fileName":      "2022-06-29.jpg",
+				"thumbnailSize": 640,
+				"originalSize":  2048,
+			},
+			{
+				"fileName":      "2022-07-01.jpg",
+				"thumbnailSize": 640,
+				"originalSize":  2048,
+			},
+			{
+				"fileName":      "2022-07-19.jpg",
+				"thumbnailSize": 640,
+				"originalSize":  2048,
+			},
+		},
 	}
 	Collection1FileName1          = "2022-06-29.jpg"
 	Collection1ThumbnailChecksum1 = "1c8a6195eefb53be554d86df9de1ae7c5559fa71938be1db595c3bef6c063796"
@@ -48,15 +66,33 @@ var (
 
 var (
 	Collection2 = map[string]interface{}{
-		"title":  "Section 2",
-		"text":   "This is Section 2",
-		"slug":   "slug-section-2",
-		"folder": "../../testdata/collection-2",
+		"title":     "Section 2",
+		"text":      "This is Section 2",
+		"slug":      "slug-section-2",
+		"folder":    "../../testdata/collection-2",
+		"ascending": false,
+		"imageSets": []map[string]interface{}{
+			{
+				"fileName":      "2022-09-28.jpg",
+				"thumbnailSize": 640,
+				"originalSize":  2048,
+			},
+			{
+				"fileName":      "2022-09-20.jpg",
+				"thumbnailSize": 640,
+				"originalSize":  2048,
+			},
+			{
+				"fileName":      "2022-04-29.jpg",
+				"thumbnailSize": 640,
+				"originalSize":  2048,
+			},
+		},
 	}
 
-	Collection2FileName1 = "2022-09-20.jpg"
-	Collection2FileName2 = "2023-04-29.jpg"
-	Collection2FileName3 = "2023-09-28.jpg"
+	Collection2FileName1 = "2023-09-28.jpg"
+	Collection2FileName2 = "2022-09-20.jpg"
+	Collection2FileName3 = "2023-04-29.jpg"
 )
 
 var (

@@ -27,7 +27,7 @@ type Context interface {
 	cleanDirectory(outputPath string) error
 	buildIndex(cfg config.Config) ([]indexer.Section, error)
 	exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc)
-	generateIndexHtml(cfg config.Config, sections []indexer.Section, path string, minimize bool)
+	generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimize bool)
 	processOtherFolders(folders []string, outputPath string, minimize bool, messageFunc func(src string, dst string))
 }
 
@@ -71,7 +71,7 @@ func export(cfg config.Config, outputPath string, minimize bool, cache cache.Cac
 
 	indexPath := files.OutputIndexFilePath(outputPath)
 	log.Debug("Exporting photos to %s", indexPath)
-	ctx.generateIndexHtml(cfg, section, indexPath, minimize)
+	ctx.generateIndexHtml(cfg, constants.TemplateFilePath, section, indexPath, minimize)
 
 	msgFunc := func(src string, dst string) {
 		spinnerMsg("copying folder %s to %s", src, dst)
@@ -119,12 +119,12 @@ func (ctx DefaultExportContext) exportPhotos(sections []indexer.Section, outputP
 	}
 }
 
-func (ctx DefaultExportContext) generateIndexHtml(cfg config.Config, sections []indexer.Section, path string, minimize bool) {
+func (ctx DefaultExportContext) generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimize bool) {
 	f, err := os.Create(path)
 	utils.CheckFatalError(err, "Failed to create index file.")
 	defer f.Close()
 
-	tmpl := template.Must(template.ParseFiles(constants.TemplateFilePath))
+	tmpl := template.Must(template.ParseFiles(templatePath))
 	err = tmpl.Execute(f, struct {
 		Config   map[string]interface{}
 		Sections []indexer.Section

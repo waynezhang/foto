@@ -5,10 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
+	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/indexer"
 	"github.com/waynezhang/foto/internal/testdata"
@@ -56,6 +58,8 @@ func (m *MockConfig) AllSettings() map[string]interface{} {
 	return m.Called().Get(0).(map[string]interface{})
 }
 
+// MockContext
+
 type MockContext struct {
 	mock.Mock
 }
@@ -81,65 +85,44 @@ func (m *MockContext) exportPhotos(sections []indexer.Section, outputPath string
 	m.Called(sections, outputPath, cache, nil)
 }
 
-func (m *MockContext) generateIndexHtml(cfg config.Config, sections []indexer.Section, path string, minimize bool) {
-	m.Called(cfg, sections, path, minimize)
+func (m *MockContext) generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimize bool) {
+	m.Called(cfg, templatePath, sections, path, minimize)
 }
 
 func (m *MockContext) processOtherFolders(folders []string, outputPath string, minimize bool, messageFunc func(src string, dst string)) {
 	m.Called(folders, outputPath, minimize, nil)
 }
 
-func TestExportPhotos(t *testing.T) {
+// MockFunc
+type MockFunc struct {
+	mock.Mock
+}
+
+func (m *MockFunc) progressFunc(path string) {
+	m.Called(path)
+}
+
+func (m *MockFunc) messageFunc(src string, dst string) {
+	m.Called(src, dst)
+}
+
+// Tests
+
+func TestExport(t *testing.T) {
 	tmp, cache := prepareTempDirAndCache(t)
 	defer os.RemoveAll(tmp)
 
-	sections := []indexer.Section{
-		{
-			Title:     "Section 1",
-			Text:      "A description",
-			Slug:      "slug-1",
-			Folder:    "folder-1",
-			Ascending: true,
-			ImageSets: []indexer.ImageSet{
-				{
-					FileName:      "filename-1",
-					ThumbnailSize: indexer.ImageSize{Width: 100, Height: 200},
-					OriginalSize:  indexer.ImageSize{Width: 300, Height: 400},
-				},
-				{
-					FileName:      "filename-2",
-					ThumbnailSize: indexer.ImageSize{Width: 500, Height: 600},
-					OriginalSize:  indexer.ImageSize{Width: 700, Height: 800},
-				},
-			},
-		},
-
-		{
-			Title:     "Section 2",
-			Text:      "A description",
-			Slug:      "slug-2",
-			Folder:    "folder-2",
-			Ascending: true,
-			ImageSets: []indexer.ImageSet{
-				{
-					FileName:      "filename-3",
-					ThumbnailSize: indexer.ImageSize{Width: 100, Height: 200},
-					OriginalSize:  indexer.ImageSize{Width: 300, Height: 400},
-				},
-				{
-					FileName:      "filename-4",
-					ThumbnailSize: indexer.ImageSize{Width: 500, Height: 600},
-					OriginalSize:  indexer.ImageSize{Width: 700, Height: 800},
-				},
-			},
-		},
-	}
+	var section1 indexer.Section
+	var section2 indexer.Section
+	mapstructure.Decode(testdata.Collection1, &section1)
+	mapstructure.Decode(testdata.Collection1, &section2)
+	sections := []indexer.Section{section1, section2}
 
 	mockCtx := new(MockContext)
 	mockCtx.On("cleanDirectory", mock.Anything).Return(nil)
 	mockCtx.On("buildIndex", mock.Anything).Return(sections, nil)
 	mockCtx.On("exportPhotos", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
-	mockCtx.On("generateIndexHtml", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
+	mockCtx.On("generateIndexHtml", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 	mockCtx.On("processOtherFolders", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 
 	cfg := new(MockConfig)
@@ -150,7 +133,7 @@ func TestExportPhotos(t *testing.T) {
 	mockCtx.AssertCalled(t, "cleanDirectory", outputPath)
 	mockCtx.AssertCalled(t, "buildIndex", cfg)
 	mockCtx.AssertCalled(t, "exportPhotos", sections, filepath.Join(outputPath, "photos"), cache, nil)
-	mockCtx.AssertCalled(t, "generateIndexHtml", cfg, sections, filepath.Join(outputPath, "index.html"), true)
+	mockCtx.AssertCalled(t, "generateIndexHtml", cfg, constants.TemplateFilePath, sections, filepath.Join(outputPath, "index.html"), true)
 	mockCtx.AssertCalled(t, "processOtherFolders", []string{"folder-1", "folder-2"}, outputPath, true, nil)
 }
 
@@ -163,21 +146,77 @@ func TestCleanDirectory(t *testing.T) {
 	assert.False(t, files.IsExisting(tmp))
 }
 
+func TestExportPhotos(t *testing.T) {
+	tmp, cache := prepareTempDirAndCache(t)
+	defer os.RemoveAll(tmp)
+
+	var section1 indexer.Section
+	var section2 indexer.Section
+	mapstructure.Decode(testdata.Collection1, &section1)
+	mapstructure.Decode(testdata.Collection1, &section2)
+	sections := []indexer.Section{section1, section2}
+
+	mockFunc := new(MockFunc)
+	mockFunc.On("progressFunc", mock.Anything).Return()
+	progressFunc := func(path string) {
+		mockFunc.progressFunc(path)
+	}
+
+	ctx := DefaultExportContext{}
+	ctx.exportPhotos(sections, tmp, cache, progressFunc)
+
+	for _, s := range sections {
+		assert.True(t, files.IsExisting(filepath.Join(tmp, s.Slug)))
+		for _, set := range s.ImageSets {
+			expectedOriginalPath := filepath.Join(tmp, s.Slug, "original", set.FileName)
+			assert.Truef(t, files.IsExisting(expectedOriginalPath), expectedOriginalPath)
+
+			expectedThumbnailPath := filepath.Join(tmp, s.Slug, "thubmnail", set.FileName)
+			assert.Truef(t, files.IsExisting(expectedOriginalPath), expectedThumbnailPath)
+		}
+	}
+	mockFunc.AssertNumberOfCalls(t, "progressFunc", 6) // 6 files
+}
+
+func TestGenerateIndexHTML(t *testing.T) {
+	tmp, _ := prepareTempDirAndCache(t)
+	defer os.RemoveAll(tmp)
+
+	sections := []indexer.Section{}
+	path := filepath.Join(tmp, "index.html")
+
+	cfg := MockConfig{}
+	cfg.On("AllSettings").Return(map[string]interface{}{})
+
+	ctx := DefaultExportContext{}
+	ctx.generateIndexHtml(&cfg, testdata.TestHtmlFile, sections, path, true)
+	assert.True(t, files.IsExisting(path))
+	cfg.AssertCalled(t, "AllSettings")
+}
+
 func TestProcessOtherFolders(t *testing.T) {
 	tmp, _ := prepareTempDirAndCache(t)
 	defer os.RemoveAll(tmp)
+
+	mockFunc := new(MockFunc)
+	mockFunc.On("messageFunc", mock.Anything, mock.Anything).Return(nil)
+	messageFunc := func(src string, dst string) {
+		mockFunc.messageFunc(src, dst)
+	}
 
 	collection1Folder := testdata.Collection1["folder"].(string)
 	collection2Folder := testdata.Collection2["folder"].(string)
 	new(DefaultExportContext).processOtherFolders([]string{
 		collection1Folder,
 		collection2Folder,
-	}, tmp, true, nil)
+	}, tmp, true, messageFunc)
 
 	file1 := filepath.Join(tmp, collection1Folder, testdata.Collection1FileName1)
 	file2 := filepath.Join(tmp, collection2Folder, testdata.Collection2FileName1)
 	assert.True(t, true, files.IsExisting(file1))
 	assert.True(t, true, files.IsExisting(file2))
+
+	mockFunc.AssertNumberOfCalls(t, "messageFunc", 2) // 2 folders
 }
 
 func TestResizeImageCache(t *testing.T) {
