@@ -2,6 +2,11 @@ package testdata
 
 const (
 	TestConfigFile = "../../fs/static/foto.toml"
+
+	TestHtmlFile       = "../../fs/static/templates/template.html"
+	TestCssFile        = "../../fs/static/assets/style.css"
+	TestTxtFile        = "../../testdata/test.txt"
+	TestJavascriptFile = "../../testdata/test.js"
 )
 
 const (
