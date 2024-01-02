@@ -2,9 +2,9 @@ package export
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/theckman/yacspin"
+	"github.com/chelnak/ysmrr"
+	"github.com/chelnak/ysmrr/pkg/animations"
 	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/constants"
@@ -36,33 +36,29 @@ func Export(outputPath string, minimize bool) error {
 }
 
 func export(cfg config.Config, outputPath string, minimizer mm.Minimizer, cache cache.Cache, ctx Context) error {
-	spinner, _ := yacspin.New(yacspin.Config{
-		Frequency:       100 * time.Millisecond,
-		CharSet:         yacspin.CharSets[14],
-		Suffix:          fmt.Sprintf(" exporting to %s", outputPath),
-		SuffixAutoColon: true,
-		StopMessage:     " succeed",
-		StopCharacter:   "✓",
-		StopColors:      []string{"fgGreen"},
-	})
-	_ = spinner.Start()
+	sm := ysmrr.NewSpinnerManager(
+		ysmrr.WithAnimation(animations.Dots),
+	)
+	prefixSpinnerMsg := fmt.Sprintf("exporting to %s: ", outputPath)
+	spinner := sm.AddSpinner(prefixSpinnerMsg)
+	sm.Start()
 
 	spinnerMsg := func(format string, a ...interface{}) {
-		spinner.Message(fmt.Sprintf(format, a...))
+		spinner.UpdateMessagef(prefixSpinnerMsg+format, a...)
 	}
 
-	spinnerMsg("Removing directory %s", outputPath)
+	spinnerMsg("removing directory %s", outputPath)
 	err := ctx.cleanDirectory(outputPath)
 	if err != nil {
 		return err
 	}
 
-	spinnerMsg("Building index %s", outputPath)
+	spinnerMsg("building index %s", outputPath)
 	photosDirectory := files.OutputPhotosFilePath(outputPath)
 	section, err := ctx.buildIndex(cfg)
 	if err != nil {
 		ctx.cleanDirectory(outputPath)
-		utils.CheckFatalError(err, "Failed t build index.")
+		utils.CheckFatalError(err, "Failed to build index.")
 	}
 
 	ctx.exportPhotos(section, photosDirectory, cache, func(path string) {
@@ -78,7 +74,10 @@ func export(cfg config.Config, outputPath string, minimizer mm.Minimizer, cache 
 	}
 	ctx.processOtherFolders(cfg.GetOtherFolders(), outputPath, minimizer, msgFunc)
 
-	_ = spinner.Stop()
+	spinner.UpdateMessagef(prefixSpinnerMsg + "succeeded")
+
+	spinner.Complete()
+	sm.Stop()
 
 	return nil
 }
