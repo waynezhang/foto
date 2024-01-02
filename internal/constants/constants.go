@@ -5,6 +5,8 @@ import "path/filepath"
 const (
 	PhotoSwipeVersion  = "5.4.2"
 	CacheDirectoryName = ".foto"
+
+	PhotosURLPath string = "/photos/"
 )
 
 var (
