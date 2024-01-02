@@ -5,7 +5,6 @@ import (
 	"image"
 	"image/jpeg"
 	_ "image/jpeg"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -25,20 +24,14 @@ func IsPhotoSupported(path string) bool {
 }
 
 func GetPhotoSize(path string) (*ImageSize, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	img, _, err := image.DecodeConfig(f)
+	src, err := openImage(path)
 	if err != nil {
 		return nil, err
 	}
 
 	return &ImageSize{
-		img.Width,
-		img.Height,
+		src.Bounds().Size().X,
+		src.Bounds().Size().Y,
 	}, nil
 }
 
@@ -61,7 +54,7 @@ func ResizeImage(src string, to string, width int) error {
 }
 
 func ResizeData(path string, width int) (*bytes.Buffer, error) {
-	src, err := imaging.Open(path, imaging.AutoOrientation(true))
+	src, err := openImage(path)
 	if err != nil {
 		return nil, err
 	}
@@ -73,4 +66,8 @@ func ResizeData(path string, width int) (*bytes.Buffer, error) {
 	}
 
 	return buf, nil
+}
+
+func openImage(path string) (image.Image, error) {
+	return imaging.Open(path, imaging.AutoOrientation(true))
 }

@@ -22,6 +22,11 @@ func TestGetPhotoSize(t *testing.T) {
 	assert.Equal(t, testdata.TestfileWidth, size.Width)
 	assert.Equal(t, testdata.TestfileHeight, size.Height)
 
+	// test against image with orientation data
+	size, err = GetPhotoSize(testdata.RotatedImageFile)
+	assert.Equal(t, testdata.RotatedImageWidth, size.Width)
+	assert.Equal(t, testdata.RotatedImageHeight, size.Height)
+
 	_, err = GetPhotoSize("nonexisting-file.jpg")
 	assert.True(t, os.IsNotExist(err))
 }
@@ -58,6 +63,6 @@ func TestResizeWithRotation(t *testing.T) {
 	assert.Nil(t, err)
 
 	size, _ := GetPhotoSize(path)
-	assert.Equal(t, testdata.RotatedImageWidth, size.Width)
-	assert.Equal(t, testdata.RotatedImageHeight, size.Height)
+	assert.Equal(t, testdata.RotatedImageThumbnailWidth, size.Width)
+	assert.Equal(t, testdata.RotatedImageThumbnailHeight, size.Height)
 }

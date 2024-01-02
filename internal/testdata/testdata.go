@@ -51,7 +51,9 @@ var (
 )
 
 var (
-	RotatedImageFile   = "../../testdata/rotated.jpg"
-	RotatedImageWidth  = 640
-	RotatedImageHeight = 480
+	RotatedImageFile            = "../../testdata/rotated.jpg"
+	RotatedImageWidth           = 1440
+	RotatedImageHeight          = 1080
+	RotatedImageThumbnailWidth  = 640
+	RotatedImageThumbnailHeight = 480
 )
