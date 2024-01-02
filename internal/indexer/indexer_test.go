@@ -18,6 +18,14 @@ var (
 	}
 )
 
+func TestValidSlug(t *testing.T) {
+	assert.True(t, validSlug("abcde-efg_9999"))
+	assert.False(t, validSlug("abcde efg_9999"))
+	assert.False(t, validSlug("abcde-efgかたかな"))
+	assert.False(t, validSlug("abcde.efg_999"))
+	assert.False(t, validSlug(""))
+}
+
 func TestBuild(t *testing.T) {
 	var meta1 config.SectionMetadata
 	var meta2 config.SectionMetadata
