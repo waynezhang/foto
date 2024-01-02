@@ -12,7 +12,6 @@ import (
 	"github.com/waynezhang/foto/internal/images"
 	"github.com/waynezhang/foto/internal/indexer"
 	"github.com/waynezhang/foto/internal/log"
-	"github.com/waynezhang/foto/internal/url"
 	"github.com/waynezhang/foto/internal/utils"
 )
 
@@ -45,9 +44,9 @@ func preview(cmd *cobra.Command, args []string) {
 		)
 	})
 
-	http.HandleFunc(url.PhotosPath, func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc(constants.PhotosURLPath, func(w http.ResponseWriter, r *http.Request) {
 		handleImage(
-			strings.TrimPrefix(r.URL.Path, url.PhotosPath),
+			strings.TrimPrefix(r.URL.Path, constants.PhotosURLPath),
 			config,
 			index,
 			w,
