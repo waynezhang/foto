@@ -161,6 +161,9 @@ It's also possible to add additional settings in `foto.toml` ([ref](https://toml
 
 # Changelogs
 
+## v1.1.0
+- 69072f0 fix rotation issue (#3)
+
 ## v1.0.8
 
 - f378beb fix(export): add error handling for duplicated slugs (Fix #4)
