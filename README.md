@@ -1,5 +1,7 @@
 # foto
 
+![](https://github.com/waynezhang/foto/actions/workflows/release.yml/badge.svg) ![](https://github.com/waynezhang/foto/actions/workflows/test.yml/badge.svg)
+
 _Yet another another publishing tool for minimalist photographers._
 
 Demo site: [https://foto.lhzhang.com](https://foto.lhzhang.com)
