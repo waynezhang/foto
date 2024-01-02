@@ -4,10 +4,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/waynezhang/foto/internal/testdata"
 )
 
 func TestFileConfig(t *testing.T) {
-	cfg := NewFileConfig("../../fs/static/foto.toml")
+	cfg := NewFileConfig(testdata.TestConfigFile)
 
 	assert.Equal(t, 640, cfg.GetExtractOption().ThumbnailWidth)
 	assert.Equal(t, 2048, cfg.GetExtractOption().OriginalWidth)

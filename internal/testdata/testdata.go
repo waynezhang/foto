@@ -1,6 +1,10 @@
 package testdata
 
 const (
+	TestConfigFile = "../../fs/static/foto.toml"
+)
+
+const (
 	Testfile         = "../../testdata/collection-1/2022-06-29.jpg"
 	TestfileWidth    = 1440
 	TestfileHeight   = 1080

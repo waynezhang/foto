@@ -11,7 +11,13 @@ import (
 	"github.com/waynezhang/foto/internal/log"
 )
 
-type Cache struct {
+type Cache interface {
+	AddImage(src string, width int, file string)
+	CachedImage(src string, width int) *string
+	Clear()
+}
+
+type FolderCache struct {
 	directoryName string
 }
 
@@ -22,19 +28,20 @@ var (
 
 func Shared() Cache {
 	once.Do(func() {
-		instance = New(constants.CacheDirectoryName)
+		instance = NewFolderCache(constants.CacheDirectoryName)
 	})
 	return instance
 }
 
-func New(directoryName string) Cache {
-	instance = Cache{}
-	instance.directoryName = directoryName
+func NewFolderCache(directoryName string) Cache {
+	instance = FolderCache{
+		directoryName: directoryName,
+	}
 	return instance
 }
 
 // `src` is used to compute checksum, `file` will be copied to the cache
-func (cache Cache) AddImage(src string, width int, file string) {
+func (cache FolderCache) AddImage(src string, width int, file string) {
 	checksum, err := files.Checksum(src)
 	if err != nil {
 		return
@@ -50,7 +57,7 @@ func (cache Cache) AddImage(src string, width int, file string) {
 	_ = cp.Copy(file, path)
 }
 
-func (cache Cache) CachedImage(src string, width int) *string {
+func (cache FolderCache) CachedImage(src string, width int) *string {
 	checksum, err := files.Checksum(src)
 	if err != nil {
 		log.Fatal("Failed to generate file hash %s (%s).", src, err.Error())
@@ -65,7 +72,7 @@ func (cache Cache) CachedImage(src string, width int) *string {
 	return &path
 }
 
-func (cache Cache) Clear() {
+func (cache FolderCache) Clear() {
 	dir := cache.directoryName
 	if !files.IsExisting(dir) {
 		log.Fatal("Failed to find cache directory %s.", dir)
@@ -73,6 +80,6 @@ func (cache Cache) Clear() {
 	files.PruneDirectory(dir)
 }
 
-func (cache Cache) imagePath(checksum string, width int) string {
+func (cache FolderCache) imagePath(checksum string, width int) string {
 	return filepath.Join(cache.directoryName, fmt.Sprintf("%s-%d", checksum, width))
 }

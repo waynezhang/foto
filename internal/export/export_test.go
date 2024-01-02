@@ -14,6 +14,30 @@ import (
 	"github.com/waynezhang/foto/internal/testdata"
 )
 
+// MockCache
+
+type MockCache struct {
+	mock.Mock
+}
+
+func (m *MockCache) AddImage(src string, width int, file string) {
+	m.Called(src, width, file)
+}
+
+func (m *MockCache) CachedImage(src string, width int) *string {
+	arg := m.Called(src, width).Get(0)
+	if arg == nil {
+		return nil
+	}
+	return arg.(*string)
+}
+
+func (m *MockCache) Clear() {
+	m.Called()
+}
+
+// MockConfig
+
 type MockConfig struct {
 	mock.Mock
 }
@@ -157,24 +181,44 @@ func TestProcessOtherFolders(t *testing.T) {
 }
 
 func TestResizeImageCache(t *testing.T) {
-	tmp, cache := prepareTempDirAndCache(t)
+	tmp, _ := os.MkdirTemp("", "foto-test")
 	defer os.RemoveAll(tmp)
 
-	assert.Nil(t, cache.CachedImage(testdata.Testfile, testdata.ThumbnailWidth))
+	src := testdata.Testfile
+	dst := filepath.Join(tmp, "resized.jpg")
+	width := testdata.ThumbnailWidth
+	cachedFile := testdata.ThumbnailFile
 
-	_ = resizeImageAndCache(testdata.Testfile, filepath.Join(tmp, "resized.jpg"), testdata.ThumbnailWidth, cache)
+	// non cached
+	cache1 := new(MockCache)
 
-	image := cache.CachedImage(testdata.Testfile, testdata.ThumbnailWidth)
-	checksum, _ := files.Checksum(*image)
-	assert.Equal(t, testdata.ExpectedThubmnailChecksum, *checksum)
+	cache1.On("CachedImage", src, width).Return(nil)
+	cache1.On("AddImage", src, width, dst).Return(nil)
+
+	err := resizeImageAndCache(src, dst, width, cache1)
+	assert.Nil(t, err)
+	cache1.AssertCalled(t, "CachedImage", src, width)
+	cache1.AssertCalled(t, "AddImage", src, width, dst)
+
+	// cached
+	cache2 := new(MockCache)
+
+	cache2.On("CachedImage", src, width).Return(&cachedFile)
+	cache2.On("AddImage", src, width, dst).Unset()
+
+	err = resizeImageAndCache(src, dst, width, cache2)
+	assert.Nil(t, err)
+	cache2.AssertCalled(t, "CachedImage", src, width)
+	cache2.AssertNotCalled(t, "AddImage", src, width, dst)
 }
 
+// helper func
 func prepareTempDirAndCache(t *testing.T) (string, cache.Cache) {
 	tmp, err := os.MkdirTemp("", "foto-test")
 	assert.Nil(t, err)
 
 	cachePath := filepath.Join(tmp, "cache")
-	cache := cache.New(cachePath)
+	cache := cache.NewFolderCache(cachePath)
 	assert.NotNil(t, cache)
 
 	return tmp, cache

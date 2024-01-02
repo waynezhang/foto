@@ -11,37 +11,42 @@ import (
 	"github.com/waynezhang/foto/internal/testdata"
 )
 
-func TestCache(t *testing.T) {
+func TestFolderCache(t *testing.T) {
 	dirName, err := os.MkdirTemp("", "foto-cache")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dirName)
 
-	instance = New(dirName)
+	cache := NewFolderCache(dirName).(FolderCache)
 
-	assert.Equal(t, dirName, instance.directoryName)
+	assert.Equal(t, dirName, cache.directoryName)
 
-	img := instance.CachedImage(testdata.Testfile, 640)
+	img := cache.CachedImage(testdata.Testfile, 640)
 	assert.Nil(t, img)
 
-	instance.AddImage(testdata.Testfile, 640, testdata.ThumbnailFile)
-	img = instance.CachedImage(testdata.Testfile, 640)
+	cache.AddImage(testdata.Testfile, 640, testdata.ThumbnailFile)
+	img = cache.CachedImage(testdata.Testfile, 640)
 	expectedPath := fmt.Sprintf("%s/%s-640", dirName, testdata.ExpectedChecksum)
 	assert.Equal(t, expectedPath, *img)
 
 	resizedChecksum, _ := files.Checksum(expectedPath)
 	assert.Equal(t, testdata.ExpectedThubmnailChecksum, *resizedChecksum)
 
-	instance.Clear()
+	// no failure on invalid file
+	cache.AddImage("nonexisting-file.jpg", 640, testdata.ThumbnailFile)
+	img = cache.CachedImage("nonexisting-file.jpg", 640)
+	assert.Nil(t, img)
+
+	cache.Clear()
 	assert.NoFileExists(t, dirName)
 }
 
 func TestShared(t *testing.T) {
-	instance := Shared()
-	assert.Equal(t, constants.CacheDirectoryName, instance.directoryName)
+	cache := Shared().(FolderCache)
+	assert.Equal(t, constants.CacheDirectoryName, cache.directoryName)
 }
 
 func TestImagePath(t *testing.T) {
-	instance := New("some-path")
-	path := instance.imagePath("some-checksum", 200)
+	cache := NewFolderCache("some-path").(FolderCache)
+	path := cache.imagePath("some-checksum", 200)
 	assert.Equal(t, "some-path/some-checksum-200", path)
 }
