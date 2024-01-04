@@ -30,12 +30,34 @@ type progressFunc func(path string)
 type context interface {
 	cleanDirectory(outputPath string) error
 	buildIndex(cfg config.Config) ([]indexer.Section, error)
-	exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFn progressFunc)
-	generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimizer mm.Minimizer)
-	processOtherFolders(folders []string, outputPath string, minimizer mm.Minimizer, messageFunc func(src string, dst string))
+	exportPhotos(
+		sections []indexer.Section,
+		outputPath string,
+		cache cache.Cache,
+		postProgressFn progressFunc,
+	)
+	generateIndexHtml(
+		cfg config.Config,
+		templatePath string,
+		sections []indexer.Section,
+		path string,
+		minimizer mm.Minimizer,
+	)
+	processOtherFolders(
+		folders []string,
+		outputPath string,
+		minimizer mm.Minimizer,
+		messageFunc func(src string, dst string),
+	)
 }
 
-func export(cfg config.Config, outputPath string, minimizer mm.Minimizer, cache cache.Cache, ctx context) error {
+func export(
+	cfg config.Config,
+	outputPath string,
+	minimizer mm.Minimizer,
+	cache cache.Cache,
+	ctx context,
+) error {
 	sm := ysmrr.NewSpinnerManager(
 		ysmrr.WithAnimation(animations.Dots),
 	)
@@ -62,7 +84,7 @@ func export(cfg config.Config, outputPath string, minimizer mm.Minimizer, cache 
 	}
 
 	ctx.exportPhotos(section, photosDirectory, cache, func(path string) {
-		spinnerMsg("%s", path)
+		spinnerMsg("processed image %s", path)
 	})
 
 	indexPath := files.OutputIndexFilePath(outputPath)
