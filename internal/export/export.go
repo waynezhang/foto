@@ -75,7 +75,7 @@ func export(
 		return err
 	}
 
-	spinnerMsg("building index %s", outputPath)
+	spinnerMsg("building index")
 	photosDirectory := files.OutputPhotosFilePath(outputPath)
 	section, err := ctx.buildIndex(cfg)
 	if err != nil {
