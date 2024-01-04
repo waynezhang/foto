@@ -62,40 +62,34 @@ func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Se
 }
 
 func buildImageSets(folder string, ascending bool, option config.ExtractOption) []ImageSet {
-	files, err := os.ReadDir(folder)
-	if err != nil {
-		log.Fatal("Failed to get photos from %s (%v)", folder, err)
-		return []ImageSet{}
-	}
+	sets := []ImageSet{}
 
-	ptrs := make([]*ImageSet, len(files))
 	wg := &sync.WaitGroup{}
-	for i, f := range files {
-		path := filepath.Join(folder, f.Name())
-		if f.IsDir() || !images.IsPhotoSupported(path) {
-			continue
+	mutext := &sync.Mutex{}
+
+	_ = filepath.WalkDir(folder, func(path string, info os.DirEntry, err error) error {
+		if info.IsDir() || !images.IsPhotoSupported(path) {
+			return nil
 		}
 
 		wg.Add(1)
 
-		go func(idx int) {
+		go func(src string) {
 			defer wg.Done()
 
-			s, err := buildImageSet(path, option)
-			if err != nil {
-				log.Fatal("Failed to extract info from %s (%v)", path, err)
+			s, err := buildImageSet(src, option)
+			if s != nil {
+				mutext.Lock()
+				sets = append(sets, *s)
+				mutext.Unlock()
+			} else {
+				log.Fatal("Failed to extract info from %s (%v)", src, err)
 			}
-			ptrs[idx] = s
-		}(i)
-	}
-	wg.Wait()
+		}(path)
 
-	sets := []ImageSet{}
-	for _, s := range ptrs {
-		if s != nil {
-			sets = append(sets, *s)
-		}
-	}
+		return nil
+	})
+	wg.Wait()
 
 	sort.SliceStable(sets, func(i, j int) bool {
 		if ascending {
