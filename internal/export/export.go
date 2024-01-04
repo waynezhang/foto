@@ -15,27 +15,27 @@ import (
 	"github.com/waynezhang/foto/internal/utils"
 )
 
-type ProgressFunc func(path string)
-
-type Context interface {
-	cleanDirectory(outputPath string) error
-	buildIndex(cfg config.Config) ([]indexer.Section, error)
-	exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc)
-	generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimizer mm.Minimizer)
-	processOtherFolders(folders []string, outputPath string, minimizer mm.Minimizer, messageFunc func(src string, dst string))
-}
-
 func Export(outputPath string, minimize bool) error {
 	return export(
 		config.Shared(),
 		outputPath,
 		minimizer(minimize),
 		cache.Shared(),
-		new(DefaultExportContext),
+		new(defaultExportContext),
 	)
 }
 
-func export(cfg config.Config, outputPath string, minimizer mm.Minimizer, cache cache.Cache, ctx Context) error {
+type progressFunc func(path string)
+
+type context interface {
+	cleanDirectory(outputPath string) error
+	buildIndex(cfg config.Config) ([]indexer.Section, error)
+	exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFn progressFunc)
+	generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimizer mm.Minimizer)
+	processOtherFolders(folders []string, outputPath string, minimizer mm.Minimizer, messageFunc func(src string, dst string))
+}
+
+func export(cfg config.Config, outputPath string, minimizer mm.Minimizer, cache cache.Cache, ctx context) error {
 	sm := ysmrr.NewSpinnerManager(
 		ysmrr.WithAnimation(animations.Dots),
 	)
