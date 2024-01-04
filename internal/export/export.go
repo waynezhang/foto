@@ -69,10 +69,9 @@ func export(cfg config.Config, outputPath string, minimizer mm.Minimizer, cache 
 	log.Debug("Exporting photos to %s", indexPath)
 	ctx.generateIndexHtml(cfg, constants.TemplateFilePath, section, indexPath, minimizer)
 
-	msgFunc := func(src string, dst string) {
+	ctx.processOtherFolders(cfg.GetOtherFolders(), outputPath, minimizer, func(src string, dst string) {
 		spinnerMsg("copying folder %s to %s", src, dst)
-	}
-	ctx.processOtherFolders(cfg.GetOtherFolders(), outputPath, minimizer, msgFunc)
+	})
 
 	spinner.UpdateMessagef(prefixSpinnerMsg + "succeeded")
 
