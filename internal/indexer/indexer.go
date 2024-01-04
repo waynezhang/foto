@@ -61,36 +61,38 @@ func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Se
 }
 
 func buildImageSets(folder string, ascending bool, option config.ExtractOption) []ImageSet {
-	imageSet := []ImageSet{}
-	err := filepath.WalkDir(folder, func(path string, info os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() || !images.IsPhotoSupported(path) {
-			return nil
-		}
+	sets := []ImageSet{}
 
-		imgSet, err := buildImageSet(path, option)
-		if err != nil {
-			return err
-		}
-		imageSet = append(imageSet, *imgSet)
-
-		return nil
-	})
+	files, err := os.ReadDir(folder)
 	if err != nil {
 		log.Fatal("Failed to get photos from %s (%v)", folder, err)
+		return sets
 	}
 
-	sort.SliceStable(imageSet, func(i, j int) bool {
+	for _, f := range files {
+		path := filepath.Join(folder, f.Name())
+		if f.IsDir() || !images.IsPhotoSupported(path) {
+			continue
+		}
+
+		s, err := buildImageSet(path, option)
+		if err != nil {
+			log.Fatal("Failed to extract info from %s (%v)", path, err)
+			continue
+		}
+
+		sets = append(sets, *s)
+	}
+
+	sort.SliceStable(sets, func(i, j int) bool {
 		if ascending {
-			return imageSet[i].FileName < imageSet[j].FileName
+			return sets[i].FileName < sets[j].FileName
 		} else {
-			return imageSet[i].FileName > imageSet[j].FileName
+			return sets[i].FileName > sets[j].FileName
 		}
 	})
 
-	return imageSet
+	return sets
 }
 
 func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) {
