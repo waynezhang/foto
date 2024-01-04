@@ -20,7 +20,7 @@ type Minimizer interface {
 type NoneMinimizer struct{}
 
 func (m NoneMinimizer) Minimizable(path string) bool {
-	return true
+	return false
 }
 
 func (m NoneMinimizer) MinimizeFile(src string, dest string) error {
