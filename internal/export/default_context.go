@@ -17,17 +17,17 @@ import (
 	"github.com/waynezhang/foto/internal/utils"
 )
 
-type DefaultExportContext struct{}
+type defaultExportContext struct{}
 
-func (ctx DefaultExportContext) cleanDirectory(outputPath string) error {
+func (ctx defaultExportContext) cleanDirectory(outputPath string) error {
 	return files.PruneDirectory(outputPath)
 }
 
-func (ctx DefaultExportContext) buildIndex(cfg config.Config) ([]indexer.Section, error) {
+func (ctx defaultExportContext) buildIndex(cfg config.Config) ([]indexer.Section, error) {
 	return indexer.Build(cfg.GetSectionMetadata(), cfg.GetExtractOption())
 }
 
-func (ctx DefaultExportContext) exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc) {
+func (ctx defaultExportContext) exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFn progressFunc) {
 	if err := files.EnsureDirectory(outputPath); err != nil {
 		utils.CheckFatalError(err, "Failed to prepare output directory")
 		return
@@ -38,8 +38,8 @@ func (ctx DefaultExportContext) exportPhotos(sections []indexer.Section, outputP
 			srcPath := filepath.Join(s.Folder, set.FileName)
 
 			log.Debug("Processing image %s", srcPath)
-			if progressFunc != nil {
-				progressFunc(srcPath)
+			if progressFn != nil {
+				progressFn(srcPath)
 			}
 
 			thumbnailPath := files.OutputPhotoThumbnailFilePath(outputPath, s.Slug, srcPath)
@@ -53,7 +53,7 @@ func (ctx DefaultExportContext) exportPhotos(sections []indexer.Section, outputP
 	}
 }
 
-func (ctx DefaultExportContext) generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimizer mm.Minimizer) {
+func (ctx defaultExportContext) generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimizer mm.Minimizer) {
 	f, err := os.Create(path)
 	utils.CheckFatalError(err, "Failed to create index file.")
 	defer f.Close()
@@ -71,7 +71,7 @@ func (ctx DefaultExportContext) generateIndexHtml(cfg config.Config, templatePat
 	_ = minimizer.MinimizeFile(path, path)
 }
 
-func (ctx DefaultExportContext) processOtherFolders(folders []string, outputPath string, minimizer mm.Minimizer, messageFunc func(src string, dst string)) {
+func (ctx defaultExportContext) processOtherFolders(folders []string, outputPath string, minimizer mm.Minimizer, messageFunc func(src string, dst string)) {
 	for _, folder := range folders {
 		targetFolder := filepath.Join(outputPath, folder)
 		if messageFunc != nil {

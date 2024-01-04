@@ -83,7 +83,7 @@ func (m *MockContext) buildIndex(cfg config.Config) ([]indexer.Section, error) {
 	return sections, err
 }
 
-func (m *MockContext) exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFunc ProgressFunc) {
+func (m *MockContext) exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFn progressFunc) {
 	m.Called(sections, outputPath, cache, nil)
 }
 
@@ -163,7 +163,7 @@ func TestCleanDirectory(t *testing.T) {
 	tmp, _ := prepareTempDirAndCache(t)
 	defer os.RemoveAll(tmp)
 
-	ctx := DefaultExportContext{}
+	ctx := defaultExportContext{}
 	ctx.cleanDirectory(tmp)
 	assert.False(t, files.IsExisting(tmp))
 }
@@ -184,7 +184,7 @@ func TestExportPhotos(t *testing.T) {
 		mockFunc.progressFunc(path)
 	}
 
-	ctx := DefaultExportContext{}
+	ctx := defaultExportContext{}
 	ctx.exportPhotos(sections, tmp, cache, progressFunc)
 
 	for _, s := range sections {
@@ -213,7 +213,7 @@ func TestGenerateIndexHTML(t *testing.T) {
 	mockMinimizer := new(MockMinimizer)
 	mockMinimizer.On("MinimizeFile", mock.Anything, mock.Anything).Return(nil)
 
-	ctx := DefaultExportContext{}
+	ctx := defaultExportContext{}
 	ctx.generateIndexHtml(&cfg, testdata.TestHtmlFile, sections, path, mockMinimizer)
 	assert.True(t, files.IsExisting(path))
 	cfg.AssertCalled(t, "AllSettings")
@@ -237,7 +237,7 @@ func TestProcessOtherFolders(t *testing.T) {
 
 	collection1Folder := testdata.Collection1["folder"].(string)
 	collection2Folder := testdata.Collection2["folder"].(string)
-	new(DefaultExportContext).processOtherFolders([]string{
+	new(defaultExportContext).processOtherFolders([]string{
 		collection1Folder,
 		collection2Folder,
 	}, tmp, mockMinimizer, messageFunc)

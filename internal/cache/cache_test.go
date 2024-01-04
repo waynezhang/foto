@@ -16,7 +16,7 @@ func TestFolderCache(t *testing.T) {
 	assert.Nil(t, err)
 	defer os.RemoveAll(dirName)
 
-	cache := NewFolderCache(dirName).(FolderCache)
+	cache := NewFolderCache(dirName).(folderCache)
 
 	assert.Equal(t, dirName, cache.directoryName)
 
@@ -41,12 +41,12 @@ func TestFolderCache(t *testing.T) {
 }
 
 func TestShared(t *testing.T) {
-	cache := Shared().(FolderCache)
+	cache := Shared().(folderCache)
 	assert.Equal(t, constants.CacheDirectoryName, cache.directoryName)
 }
 
 func TestImagePath(t *testing.T) {
-	cache := NewFolderCache("some-path").(FolderCache)
+	cache := NewFolderCache("some-path").(folderCache)
 	path := cache.imagePath("some-checksum", 200)
 	assert.Equal(t, "some-path/some-checksum-200", path)
 }
