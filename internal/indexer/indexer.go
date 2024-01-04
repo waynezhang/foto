@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"sync"
 
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/images"
@@ -61,27 +62,39 @@ func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Se
 }
 
 func buildImageSets(folder string, ascending bool, option config.ExtractOption) []ImageSet {
-	sets := []ImageSet{}
-
 	files, err := os.ReadDir(folder)
 	if err != nil {
 		log.Fatal("Failed to get photos from %s (%v)", folder, err)
-		return sets
+		return []ImageSet{}
 	}
 
-	for _, f := range files {
+	ptrs := make([]*ImageSet, len(files))
+	wg := &sync.WaitGroup{}
+	for i, f := range files {
 		path := filepath.Join(folder, f.Name())
 		if f.IsDir() || !images.IsPhotoSupported(path) {
 			continue
 		}
 
-		s, err := buildImageSet(path, option)
-		if err != nil {
-			log.Fatal("Failed to extract info from %s (%v)", path, err)
-			continue
-		}
+		wg.Add(1)
 
-		sets = append(sets, *s)
+		go func(idx int) {
+			defer wg.Done()
+
+			s, err := buildImageSet(path, option)
+			if err != nil {
+				log.Fatal("Failed to extract info from %s (%v)", path, err)
+			}
+			ptrs[idx] = s
+		}(i)
+	}
+	wg.Wait()
+
+	sets := []ImageSet{}
+	for _, s := range ptrs {
+		if s != nil {
+			sets = append(sets, *s)
+		}
 	}
 
 	sort.SliceStable(sets, func(i, j int) bool {
