@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sync"
 
 	cp "github.com/otiai10/copy"
 	"github.com/waynezhang/foto/internal/cache"
@@ -27,30 +28,48 @@ func (ctx defaultExportContext) buildIndex(cfg config.Config) ([]indexer.Section
 	return indexer.Build(cfg.GetSectionMetadata(), cfg.GetExtractOption())
 }
 
-func (ctx defaultExportContext) exportPhotos(sections []indexer.Section, outputPath string, cache cache.Cache, progressFn progressFunc) {
+func (ctx defaultExportContext) exportPhotos(
+	sections []indexer.Section,
+	outputPath string,
+	cache cache.Cache,
+	postProgressFn progressFunc,
+) {
 	if err := files.EnsureDirectory(outputPath); err != nil {
 		utils.CheckFatalError(err, "Failed to prepare output directory")
 		return
 	}
 
+	wg := &sync.WaitGroup{}
+
 	for _, s := range sections {
 		for _, set := range s.ImageSets {
 			srcPath := filepath.Join(s.Folder, set.FileName)
 
-			log.Debug("Processing image %s", srcPath)
-			if progressFn != nil {
-				progressFn(srcPath)
-			}
+			wg.Add(1)
 
-			thumbnailPath := files.OutputPhotoThumbnailFilePath(outputPath, s.Slug, srcPath)
-			err := resizeImageAndCache(srcPath, thumbnailPath, set.ThumbnailSize.Width, cache)
-			utils.CheckFatalError(err, "Failed to generate thumbnail image")
+			slug := s.Slug
+			thumbnailWidth := set.ThumbnailSize.Width
+			originalWidth := set.OriginalSize.Width
+			go func() {
+				defer wg.Done()
 
-			originalPath := files.OutputPhotoOriginalFilePath(outputPath, s.Slug, srcPath)
-			err = resizeImageAndCache(srcPath, originalPath, set.OriginalSize.Width, cache)
-			utils.CheckFatalError(err, "Failed to generate original image")
+				thumbnailPath := files.OutputPhotoThumbnailFilePath(outputPath, slug, srcPath)
+				err := resizeImageAndCache(srcPath, thumbnailPath, thumbnailWidth, cache)
+				utils.CheckFatalError(err, "Failed to generate thumbnail image")
+
+				originalPath := files.OutputPhotoOriginalFilePath(outputPath, slug, srcPath)
+				err = resizeImageAndCache(srcPath, originalPath, originalWidth, cache)
+				utils.CheckFatalError(err, "Failed to generate original image")
+
+				log.Debug("Processing image %s", srcPath)
+				if postProgressFn != nil {
+					postProgressFn(srcPath)
+				}
+			}()
 		}
 	}
+
+	wg.Wait()
 }
 
 func (ctx defaultExportContext) generateIndexHtml(cfg config.Config, templatePath string, sections []indexer.Section, path string, minimizer mm.Minimizer) {
