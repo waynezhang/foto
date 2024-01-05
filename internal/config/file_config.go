@@ -1,9 +1,9 @@
 package config
 
 import (
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"github.com/waynezhang/foto/internal/constants"
-	"github.com/waynezhang/foto/internal/log"
 	"github.com/waynezhang/foto/internal/utils"
 )
 
@@ -30,7 +30,7 @@ func NewFileConfig(file string) Config {
 	v.UnmarshalKey("image", &config.option)
 	v.UnmarshalKey("others.folders", &config.otherFolders)
 
-	log.Debug("Config parsed: %v", config)
+	log.Debug().Msgf("Config parsed: %v", config)
 
 	return config
 }

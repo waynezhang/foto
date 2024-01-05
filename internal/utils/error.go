@@ -1,9 +1,7 @@
 package utils
 
 import (
-	"os"
-
-	"github.com/waynezhang/foto/internal/log"
+	"github.com/rs/zerolog/log"
 )
 
 func CheckFatalError(err error, errMessage string) {
@@ -11,6 +9,5 @@ func CheckFatalError(err error, errMessage string) {
 		return
 	}
 
-	log.Fatal("%s (%s)", errMessage, err)
-	os.Exit(1)
+	log.Fatal().Msgf("%s (%s)", errMessage, err)
 }

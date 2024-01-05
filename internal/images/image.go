@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
+	"github.com/rs/zerolog/log"
 	"github.com/waynezhang/foto/internal/files"
-	"github.com/waynezhang/foto/internal/log"
 )
 
 type ImageSize struct {
@@ -41,7 +41,7 @@ func AspectedHeight(size ImageSize, width int) int {
 }
 
 func ResizeImage(src string, to string, width int) error {
-	log.Debug("Resizing %s to %d", src, width)
+	log.Debug().Msgf("Resizing %s to %d", src, width)
 	data, err := ResizeData(src, width)
 	if err != nil {
 		return err

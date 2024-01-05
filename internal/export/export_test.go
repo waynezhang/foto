@@ -244,8 +244,8 @@ func TestProcessOtherFolders(t *testing.T) {
 
 	file1 := filepath.Join(tmp, collection1Folder, testdata.Collection1FileName1)
 	file2 := filepath.Join(tmp, collection2Folder, testdata.Collection2FileName1)
-	assert.True(t, true, files.IsExisting(file1))
-	assert.True(t, true, files.IsExisting(file2))
+	assert.True(t, files.IsExisting(file1))
+	assert.True(t, files.IsExisting(file2))
 
 	mockFunc.AssertNumberOfCalls(t, "messageFunc", 2) // 2 folders
 
