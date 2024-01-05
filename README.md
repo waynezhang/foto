@@ -161,25 +161,7 @@ It's also possible to add additional settings in `foto.toml` ([ref](https://toml
 
 # Changelogs
 
-## v1.1.0
-- 69072f0 fix rotation issue (#3)
-
-## v1.0.8
-
-- f378beb fix(export): add error handling for duplicated slugs (Fix #4)
-- Big refactoring
-- Add tests
-
-### BREAKING CHANGE
-
-`PhotoSwipeVersion` variable in lower case `photoswipeversion` now.
-
-## v1.0.7
-
-`.Config.PhotoSwipeVersion` is available in [template](https://github.com/waynezhang/foto/commit/41ffd5adea5bd056c0445bfe8a42e93eb16d6602).
-
-## v1.0.6
-v1.0.6 fixed the [image rotation issue](https://github.com/waynezhang/foto/issues/3). You need to [clear the cache](#clear-cache) to regenerate the proceeded images.
+See [CHANGELOG](./CHANGELOG.md)
 
 # LICENSE
  
