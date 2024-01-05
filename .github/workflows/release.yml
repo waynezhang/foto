@@ -9,18 +9,22 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-
+    - name: Checkout
+      uses: actions/checkout@v4
+    
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: 1.21.5
+
+    - name: Generate change log
+      run: go run github.com/release-lab/whatchanged/cmd/whatchanged@latest @0~@1 > /tmp/release-note.md
 
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v5
       with:
         distribution: goreleaser
         version: latest
-        args: release --clean
+        args: release --clean --release-notes /tmp/release-note.md
       env:
         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
