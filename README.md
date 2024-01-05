@@ -12,6 +12,7 @@ Demo site: [https://foto.lhzhang.com](https://foto.lhzhang.com)
 
 - `Simple` One binary, three commands. No database.
 - `Customizable` Highly customizable by configuration and template files.
+- `Fast` Files are handled concurrently.
 
 ## Install
 
