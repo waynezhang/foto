@@ -223,6 +223,8 @@ func TestGenerateIndexHTML(t *testing.T) {
 
 func TestProcessOtherFolders(t *testing.T) {
 	tmp, _ := prepareTempDirAndCache(t)
+	tmp = "/tmp/a"
+	files.EnsureDirectory(tmp)
 	defer os.RemoveAll(tmp)
 
 	mockMinimizer := new(MockMinimizer)
@@ -242,8 +244,8 @@ func TestProcessOtherFolders(t *testing.T) {
 		collection2Folder,
 	}, tmp, mockMinimizer, messageFunc)
 
-	file1 := filepath.Join(tmp, collection1Folder, testdata.Collection1FileName1)
-	file2 := filepath.Join(tmp, collection2Folder, testdata.Collection2FileName1)
+	file1 := filepath.Join(tmp, filepath.Base(collection1Folder), testdata.Collection1FileName1)
+	file2 := filepath.Join(tmp, filepath.Base(collection2Folder), testdata.Collection2FileName1)
 	assert.True(t, files.IsExisting(file1))
 	assert.True(t, files.IsExisting(file2))
 

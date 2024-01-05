@@ -92,7 +92,7 @@ func (ctx defaultExportContext) generateIndexHtml(cfg config.Config, templatePat
 
 func (ctx defaultExportContext) processOtherFolders(folders []string, outputPath string, minimizer mm.Minimizer, messageFunc func(src string, dst string)) {
 	for _, folder := range folders {
-		targetFolder := filepath.Join(outputPath, folder)
+		targetFolder := filepath.Join(outputPath, filepath.Base(folder))
 		if messageFunc != nil {
 			messageFunc(folder, targetFolder)
 		}
