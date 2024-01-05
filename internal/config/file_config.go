@@ -26,9 +26,9 @@ func NewFileConfig(file string) Config {
 
 	config := fileConfig{v: v}
 
-	v.UnmarshalKey("section", &config.sections)
-	v.UnmarshalKey("image", &config.option)
-	v.UnmarshalKey("others.folders", &config.otherFolders)
+	_ = v.UnmarshalKey("section", &config.sections)
+	_ = v.UnmarshalKey("image", &config.option)
+	_ = v.UnmarshalKey("others.folders", &config.otherFolders)
 
 	log.Debug().Msgf("Config parsed: %v", config)
 

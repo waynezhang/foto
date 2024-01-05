@@ -23,7 +23,7 @@ func TestGetPhotoSize(t *testing.T) {
 	assert.Equal(t, testdata.TestfileHeight, size.Height)
 
 	// test against image with orientation data
-	size, err = GetPhotoSize(testdata.RotatedImageFile)
+	size, _ = GetPhotoSize(testdata.RotatedImageFile)
 	assert.Equal(t, testdata.RotatedImageWidth, size.Width)
 	assert.Equal(t, testdata.RotatedImageHeight, size.Height)
 
@@ -49,7 +49,7 @@ func TestResizeImage(t *testing.T) {
 	err = ResizeImage(testdata.Testfile, path, testdata.ThumbnailWidth)
 	assert.Nil(t, err)
 
-	checksum, err := files.Checksum(path)
+	checksum, _ := files.Checksum(path)
 	assert.Equal(t, testdata.ExpectedThubmnailChecksum, *checksum)
 }
 

@@ -134,8 +134,8 @@ func TestExport(t *testing.T) {
 
 	var section1 indexer.Section
 	var section2 indexer.Section
-	mapstructure.Decode(testdata.Collection1, &section1)
-	mapstructure.Decode(testdata.Collection1, &section2)
+	_ = mapstructure.Decode(testdata.Collection1, &section1)
+	_ = mapstructure.Decode(testdata.Collection1, &section2)
 	sections := []indexer.Section{section1, section2}
 
 	mockCtx := new(MockContext)
@@ -164,7 +164,7 @@ func TestCleanDirectory(t *testing.T) {
 	defer os.RemoveAll(tmp)
 
 	ctx := defaultExportContext{}
-	ctx.cleanDirectory(tmp)
+	_ = ctx.cleanDirectory(tmp)
 	assert.False(t, files.IsExisting(tmp))
 }
 
@@ -174,8 +174,8 @@ func TestExportPhotos(t *testing.T) {
 
 	var section1 indexer.Section
 	var section2 indexer.Section
-	mapstructure.Decode(testdata.Collection1, &section1)
-	mapstructure.Decode(testdata.Collection1, &section2)
+	_ = mapstructure.Decode(testdata.Collection1, &section1)
+	_ = mapstructure.Decode(testdata.Collection1, &section2)
 	sections := []indexer.Section{section1, section2}
 
 	mockFunc := new(MockFunc)

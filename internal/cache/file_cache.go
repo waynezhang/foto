@@ -65,7 +65,7 @@ func (cache folderCache) Clear() {
 	if !files.IsExisting(dir) {
 		log.Warn().Msgf("Failed to find cache directory %s.", dir)
 	}
-	files.PruneDirectory(dir)
+	_ = files.PruneDirectory(dir)
 }
 
 func (cache folderCache) imagePath(checksum string, width int) string {

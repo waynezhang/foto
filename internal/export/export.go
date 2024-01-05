@@ -15,8 +15,8 @@ import (
 	"github.com/waynezhang/foto/internal/utils"
 )
 
-func Export(outputPath string, minimize bool) error {
-	return export(
+func Export(outputPath string, minimize bool) {
+	export(
 		config.Shared(),
 		outputPath,
 		minimizer(minimize),
@@ -57,7 +57,7 @@ func export(
 	minimizer mm.Minimizer,
 	cache cache.Cache,
 	ctx context,
-) error {
+) {
 	sm := ysmrr.NewSpinnerManager(
 		ysmrr.WithAnimation(animations.Dots),
 	)
@@ -79,7 +79,7 @@ func export(
 	photosDirectory := files.OutputPhotosFilePath(outputPath)
 	section, err := ctx.buildIndex(cfg)
 	if err != nil {
-		ctx.cleanDirectory(outputPath)
+		_ = ctx.cleanDirectory(outputPath)
 		utils.CheckFatalError(err, "Failed to build index.")
 	}
 
@@ -99,8 +99,6 @@ func export(
 
 	spinner.Complete()
 	sm.Stop()
-
-	return nil
 }
 
 func minimizer(minimize bool) mm.Minimizer {

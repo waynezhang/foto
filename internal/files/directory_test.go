@@ -16,20 +16,20 @@ func TestDirectoryManipulating(t *testing.T) {
 	assert.True(t, IsExisting(tmp))
 
 	dir1 := filepath.Join(tmp, "parent1", "child1")
-	EnsureDirectory(dir1)
+	_ = EnsureDirectory(dir1)
 	assert.True(t, IsExisting(dir1))
 
 	// no failure to create existing directory
-	EnsureParentDirectory(dir1)
+	_ = EnsureParentDirectory(dir1)
 	assert.True(t, IsExisting(dir1))
 
 	dir2Parent := filepath.Join(tmp, "parent2")
 	dir2 := filepath.Join(dir2Parent, "child2")
-	EnsureParentDirectory(dir2)
+	_ = EnsureParentDirectory(dir2)
 	assert.True(t, IsExisting(dir2Parent))
 	assert.False(t, IsExisting(dir2))
 
-	PruneDirectory(tmp)
+	_ = PruneDirectory(tmp)
 	assert.False(t, IsExisting(tmp))
 }
 
