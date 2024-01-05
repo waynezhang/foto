@@ -72,7 +72,7 @@ func export(
 	spinnerMsg("removing directory %s", outputPath)
 	err := ctx.cleanDirectory(outputPath)
 	if err != nil {
-		return err
+		utils.CheckFatalError(err, "Failed to remove directory.")
 	}
 
 	spinnerMsg("building index")
