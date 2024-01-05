@@ -19,6 +19,9 @@ coverage:
 		go test ./... -coverprofile=$$TMPFILE; \
 		go tool cover -html $$TMPFILE
 
+changelog:
+	@whatchanged HEAD > CHANGELOG.md
+
 .PHONY: install
 install:
 	@go install ${LDFLAGS} ./...
