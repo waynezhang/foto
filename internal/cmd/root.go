@@ -1,8 +1,11 @@
 package cmd
 
 import (
+	"os"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/waynezhang/foto/internal/log"
 	"github.com/waynezhang/foto/internal/utils"
 )
 
@@ -15,7 +18,12 @@ func Execute() {
 			_ = cmd.Help()
 		},
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			log.SetVerbose(verbose)
+			log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+			if verbose {
+				zerolog.SetGlobalLevel(zerolog.DebugLevel)
+			} else {
+				zerolog.SetGlobalLevel(zerolog.InfoLevel)
+			}
 		},
 	}
 

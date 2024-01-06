@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	cp "github.com/otiai10/copy"
+	"github.com/rs/zerolog/log"
 	"github.com/waynezhang/foto/internal/files"
-	"github.com/waynezhang/foto/internal/log"
 )
 
 // Implenmentation
@@ -36,7 +36,7 @@ func (cache folderCache) AddImage(src string, width int, file string) {
 	}
 
 	path := cache.imagePath(*checksum, width)
-	log.Debug("Add cache image %s for %s", path, src)
+	log.Debug().Msgf("Add cache image %s for %s", path, src)
 	err = files.EnsureParentDirectory(path)
 	if err != nil {
 		return
@@ -48,7 +48,7 @@ func (cache folderCache) AddImage(src string, width int, file string) {
 func (cache folderCache) CachedImage(src string, width int) *string {
 	checksum, err := files.Checksum(src)
 	if err != nil {
-		log.Fatal("Failed to generate file hash %s (%s).", src, err.Error())
+		log.Warn().Msgf("Failed to generate file hash %s (%s).", src, err.Error())
 		return nil
 	}
 
@@ -63,9 +63,9 @@ func (cache folderCache) CachedImage(src string, width int) *string {
 func (cache folderCache) Clear() {
 	dir := cache.directoryName
 	if !files.IsExisting(dir) {
-		log.Fatal("Failed to find cache directory %s.", dir)
+		log.Warn().Msgf("Failed to find cache directory %s.", dir)
 	}
-	files.PruneDirectory(dir)
+	_ = files.PruneDirectory(dir)
 }
 
 func (cache folderCache) imagePath(checksum string, width int) string {

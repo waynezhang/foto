@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/images"
 	"github.com/waynezhang/foto/internal/indexer"
-	"github.com/waynezhang/foto/internal/log"
 	"github.com/waynezhang/foto/internal/utils"
 )
 
@@ -29,7 +29,7 @@ var PreviewCmd = func() *cobra.Command {
 }()
 
 func preview(cmd *cobra.Command, args []string) {
-	log.Debug("Creating Preview...")
+	log.Debug().Msg("Creating Preview...")
 
 	config := config.Shared()
 	index, err := indexer.Build(config.GetSectionMetadata(), config.GetExtractOption())
@@ -61,7 +61,7 @@ func preview(cmd *cobra.Command, args []string) {
 		http.Handle(path, http.StripPrefix(path, dir))
 	}
 
-	log.Info("Server started -> http://localhost:%d", port)
+	log.Info().Msgf("Server started -> http://localhost:%d", port)
 	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	utils.CheckFatalError(err, "Failed to listen the port")
 }

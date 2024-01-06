@@ -9,9 +9,9 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/rs/zerolog/log"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/images"
-	"github.com/waynezhang/foto/internal/log"
 )
 
 type Section struct {
@@ -44,7 +44,7 @@ func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Se
 			return nil, fmt.Errorf("Slug \"%s\" already exists. Slug needs to be unique.", slug)
 		}
 
-		log.Debug("Extacting section [%s][/%s] %s", val.Title, val.Slug, val.Folder)
+		log.Debug().Msgf("Extacting section [%s][/%s] %s", val.Title, val.Slug, val.Folder)
 		s := Section{
 			Title:     val.Title,
 			Text:      val.Text,
@@ -83,7 +83,7 @@ func buildImageSets(folder string, ascending bool, option config.ExtractOption) 
 				sets = append(sets, *s)
 				mutext.Unlock()
 			} else {
-				log.Fatal("Failed to extract info from %s (%v)", src, err)
+				log.Warn().Msgf("Failed to extract info from %s (%v)", src, err)
 			}
 		}(path)
 

@@ -29,8 +29,8 @@ func TestValidSlug(t *testing.T) {
 func TestBuild(t *testing.T) {
 	var meta1 config.SectionMetadata
 	var meta2 config.SectionMetadata
-	mapstructure.Decode(testdata.Collection1, &meta1)
-	mapstructure.Decode(testdata.Collection2, &meta2)
+	_ = mapstructure.Decode(testdata.Collection1, &meta1)
+	_ = mapstructure.Decode(testdata.Collection2, &meta2)
 
 	data := []config.SectionMetadata{meta1, meta2}
 
@@ -49,8 +49,8 @@ func TestBuild(t *testing.T) {
 func TestBuildDuplicatedSlugs(t *testing.T) {
 	var meta1 config.SectionMetadata
 	var meta2 config.SectionMetadata
-	mapstructure.Decode(testdata.Collection1, &meta1)
-	mapstructure.Decode(testdata.Collection2, &meta2)
+	_ = mapstructure.Decode(testdata.Collection1, &meta1)
+	_ = mapstructure.Decode(testdata.Collection2, &meta2)
 	meta2.Slug = meta1.Slug
 
 	data := []config.SectionMetadata{meta1, meta2}

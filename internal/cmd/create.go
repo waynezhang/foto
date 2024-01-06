@@ -2,14 +2,13 @@ package cmd
 
 import (
 	"io/fs"
-	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	staticFs "github.com/waynezhang/foto/fs"
 	"github.com/waynezhang/foto/internal/files"
-	"github.com/waynezhang/foto/internal/log"
 	"github.com/waynezhang/foto/internal/utils"
 )
 
@@ -25,17 +24,15 @@ var CreateCmd = func() *cobra.Command {
 
 func create(cmd *cobra.Command, args []string) {
 	if len(args) != 1 {
-		log.Fatal("Directory argument not found")
-		os.Exit(1)
+		log.Fatal().Msg("Directory argument not found")
 	}
 
 	targetPath := args[0]
 	if files.IsExisting(targetPath) {
-		log.Fatal("Directory " + targetPath + " already exists.")
-		os.Exit(1)
+		log.Fatal().Msg("Directory " + targetPath + " already exists.")
 	}
 
-	log.Debug("Creating directory %s...", targetPath)
+	log.Debug().Msgf("Creating directory %s...", targetPath)
 	err := files.EnsureDirectory(targetPath)
 	utils.CheckFatalError(err, "Failed to create directory")
 

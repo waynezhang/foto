@@ -8,12 +8,12 @@ import (
 	"sync"
 
 	cp "github.com/otiai10/copy"
+	"github.com/rs/zerolog/log"
 	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/images"
 	"github.com/waynezhang/foto/internal/indexer"
-	"github.com/waynezhang/foto/internal/log"
 	mm "github.com/waynezhang/foto/internal/minimize"
 	"github.com/waynezhang/foto/internal/utils"
 )
@@ -61,7 +61,7 @@ func (ctx defaultExportContext) exportPhotos(
 				err = resizeImageAndCache(srcPath, originalPath, originalWidth, cache)
 				utils.CheckFatalError(err, "Failed to generate original image")
 
-				log.Debug("Processing image %s", srcPath)
+				log.Debug().Msgf("Processing image %s", srcPath)
 				if postProgressFn != nil {
 					postProgressFn(srcPath)
 				}
@@ -92,13 +92,13 @@ func (ctx defaultExportContext) generateIndexHtml(cfg config.Config, templatePat
 
 func (ctx defaultExportContext) processOtherFolders(folders []string, outputPath string, minimizer mm.Minimizer, messageFunc func(src string, dst string)) {
 	for _, folder := range folders {
-		targetFolder := filepath.Join(outputPath, folder)
+		targetFolder := filepath.Join(outputPath, filepath.Base(folder))
 		if messageFunc != nil {
 			messageFunc(folder, targetFolder)
 		}
 
 		if err := cp.Copy(folder, targetFolder); err != nil {
-			log.Fatal("Failed to copy folder %s to %s (%s).", folder, targetFolder, err)
+			log.Error().Msgf("Failed to copy folder %s to %s (%s).", folder, targetFolder, err)
 		}
 		_ = filepath.WalkDir(targetFolder, func(path string, d fs.DirEntry, err error) error {
 			if minimizer.Minimizable(path) {
@@ -112,7 +112,7 @@ func (ctx defaultExportContext) processOtherFolders(folders []string, outputPath
 func resizeImageAndCache(src string, to string, width int, cache cache.Cache) error {
 	cached := cache.CachedImage(src, width)
 	if cached != nil {
-		log.Debug("Found cached image for %s", src)
+		log.Debug().Msgf("Found cached image for %s", src)
 		err := cp.Copy(*cached, to)
 		if err == nil {
 			return nil

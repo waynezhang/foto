@@ -5,18 +5,18 @@ import (
 
 	"github.com/chelnak/ysmrr"
 	"github.com/chelnak/ysmrr/pkg/animations"
+	"github.com/rs/zerolog/log"
 	"github.com/waynezhang/foto/internal/cache"
 	"github.com/waynezhang/foto/internal/config"
 	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/files"
 	"github.com/waynezhang/foto/internal/indexer"
-	"github.com/waynezhang/foto/internal/log"
 	mm "github.com/waynezhang/foto/internal/minimize"
 	"github.com/waynezhang/foto/internal/utils"
 )
 
-func Export(outputPath string, minimize bool) error {
-	return export(
+func Export(outputPath string, minimize bool) {
+	export(
 		config.Shared(),
 		outputPath,
 		minimizer(minimize),
@@ -57,7 +57,7 @@ func export(
 	minimizer mm.Minimizer,
 	cache cache.Cache,
 	ctx context,
-) error {
+) {
 	sm := ysmrr.NewSpinnerManager(
 		ysmrr.WithAnimation(animations.Dots),
 	)
@@ -72,14 +72,14 @@ func export(
 	spinnerMsg("removing directory %s", outputPath)
 	err := ctx.cleanDirectory(outputPath)
 	if err != nil {
-		return err
+		utils.CheckFatalError(err, "Failed to remove directory.")
 	}
 
 	spinnerMsg("building index")
 	photosDirectory := files.OutputPhotosFilePath(outputPath)
 	section, err := ctx.buildIndex(cfg)
 	if err != nil {
-		ctx.cleanDirectory(outputPath)
+		_ = ctx.cleanDirectory(outputPath)
 		utils.CheckFatalError(err, "Failed to build index.")
 	}
 
@@ -88,7 +88,7 @@ func export(
 	})
 
 	indexPath := files.OutputIndexFilePath(outputPath)
-	log.Debug("Exporting photos to %s", indexPath)
+	log.Debug().Msgf("Exporting photos to %s", indexPath)
 	ctx.generateIndexHtml(cfg, constants.TemplateFilePath, section, indexPath, minimizer)
 
 	ctx.processOtherFolders(cfg.GetOtherFolders(), outputPath, minimizer, func(src string, dst string) {
@@ -99,8 +99,6 @@ func export(
 
 	spinner.Complete()
 	sm.Stop()
-
-	return nil
 }
 
 func minimizer(minimize bool) mm.Minimizer {
