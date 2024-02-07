@@ -3,7 +3,6 @@ package cache
 import (
 	"fmt"
 	"path/filepath"
-	"sync"
 
 	cp "github.com/otiai10/copy"
 	"github.com/rs/zerolog/log"
@@ -16,16 +15,10 @@ type folderCache struct {
 	directoryName string
 }
 
-var (
-	once     sync.Once
-	instance Cache
-)
-
 func NewFolderCache(directoryName string) Cache {
-	instance = folderCache{
+	return folderCache{
 		directoryName: directoryName,
 	}
-	return instance
 }
 
 // `src` is used to compute checksum, `file` will be copied to the cache

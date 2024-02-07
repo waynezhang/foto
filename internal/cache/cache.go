@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"sync"
+
 	"github.com/waynezhang/foto/internal/constants"
 )
 
@@ -9,6 +11,11 @@ type Cache interface {
 	CachedImage(src string, width int) *string
 	Clear()
 }
+
+var (
+	once     sync.Once
+	instance Cache
+)
 
 func Shared() Cache {
 	once.Do(func() {
