@@ -1,3 +1,16 @@
+## v1.2.1 (2024-02-07)
+
+### Bugs fixed:
+
+fix(#8): provide iamge size for grid computing ([`35197f6`](https://github.com/waynezhang/foto/commit/35197f60525c52c6f26f5ea460f3ea957e3e6073))
+fix: handle singleton in cache properly ([`39c3257`](https://github.com/waynezhang/foto/pull/10/commits/39c32576d4d040647dfa1dbe24ddaffcdd1d8853))
+fix: handle relative folders ([`3dc7b96`](https://github.com/waynezhang/foto/commit/3dc7b96d47327c937f695fee5fe911f4bf9b77d1))
+fix: show error if failed to clean output directory ([`ec097bf `](https://github.com/waynezhang/foto/commit/ec097bf8002ba27eabbd2a1d2bee372e78e0a11b))
+
+### Others:
+
+refactor: migrate to new logger ([`c075a6a `](https://github.com/waynezhang/foto/commit/c075a6a843045f143bd9202b3cc5ebc16cc3c2fe))
+
 ## v1.2.0 (2024-01-05)
 
 ### Bugs fixed:
