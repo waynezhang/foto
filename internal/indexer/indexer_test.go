@@ -2,6 +2,7 @@ package indexer
 
 import (
 	"html/template"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -86,6 +87,13 @@ func TestBuildImageSets(t *testing.T) {
 		sets[1].FileName,
 		sets[2].FileName,
 	})
+}
+
+func TestInvalidBuildImageSets(t *testing.T) {
+	tmp, _ := os.MkdirTemp("", "foto-test")
+	path := filepath.Join(tmp, "folder-not-exist")
+	// no crash expected
+	_ = buildImageSets(path, true, defaultOption)
 }
 
 func TestBuildImageSet(t *testing.T) {
