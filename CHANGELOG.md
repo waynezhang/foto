@@ -1,3 +1,9 @@
+## v1.2.2 (2024-02-28)
+
+### Bugs fixed:
+
+- **indexer**: crash on directory traversal([`45de818`](https://github.com/waynezhang/foto/commit/45de8189b028ce71407c422101591cf40835fcb7))
+
 ## v1.2.1 (2024-02-07)
 
 ### Bugs fixed:
