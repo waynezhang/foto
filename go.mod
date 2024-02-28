@@ -3,7 +3,7 @@ module github.com/waynezhang/foto
 go 1.18
 
 require (
-	github.com/chelnak/ysmrr v0.3.0
+	github.com/chelnak/ysmrr v0.4.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/otiai10/copy v1.14.0

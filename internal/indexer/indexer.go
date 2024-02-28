@@ -68,6 +68,10 @@ func buildImageSets(folder string, ascending bool, option config.ExtractOption) 
 	mutext := &sync.Mutex{}
 
 	_ = filepath.WalkDir(folder, func(path string, info os.DirEntry, err error) error {
+		if err != nil {
+			log.Warn().Msgf("Failed to extract info from %s (%v)", path, err)
+			return nil
+		}
 		if info.IsDir() || !images.IsPhotoSupported(path) {
 			return nil
 		}
