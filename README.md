@@ -1,3 +1,5 @@
+![foto-cover](https://github.com/waynezhang/foto/assets/480052/13e77201-c680-49f5-8ce7-9ba0c73e6ddc)
+
 # foto
 
 ![](https://github.com/waynezhang/foto/actions/workflows/release.yml/badge.svg) ![](https://github.com/waynezhang/foto/actions/workflows/test.yml/badge.svg)
@@ -5,8 +7,6 @@
 _Yet another another publishing tool for minimalist photographers._
 
 Demo site: [https://foto.lhzhang.com](https://foto.lhzhang.com)
-
-<img width="550" alt="" src="https://user-images.githubusercontent.com/480052/181399181-25d3657d-7fff-4ad0-97a0-392a8effb18e.png">
 
 ## Features
 
