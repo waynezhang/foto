@@ -11,6 +11,7 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/rs/zerolog/log"
 	"github.com/waynezhang/foto/internal/files"
+	_ "golang.org/x/image/webp"
 )
 
 type ImageSize struct {
@@ -20,7 +21,7 @@ type ImageSize struct {
 
 func IsPhotoSupported(path string) bool {
 	lowerExt := strings.ToLower(filepath.Ext(path))
-	return lowerExt == ".jpeg" || lowerExt == ".jpg"
+	return lowerExt == ".jpeg" || lowerExt == ".jpg" || lowerExt == ".webp"
 }
 
 func GetPhotoSize(path string) (*ImageSize, error) {
