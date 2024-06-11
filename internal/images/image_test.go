@@ -13,6 +13,7 @@ import (
 func TestPhotoSupport(t *testing.T) {
 	assert.True(t, IsPhotoSupported("photo.jpg"))
 	assert.True(t, IsPhotoSupported("photo.jpeg"))
+	assert.True(t, IsPhotoSupported("photo.webp"))
 	assert.False(t, IsPhotoSupported("photo.png"))
 }
 
