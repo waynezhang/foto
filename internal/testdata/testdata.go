@@ -102,3 +102,13 @@ var (
 	RotatedImageThumbnailWidth  = 640
 	RotatedImageThumbnailHeight = 480
 )
+
+var (
+	WebpTestFile       = "../../testdata/webp/test.webp"
+	WebpTestfileWidth  = 8000
+	WebpTestfileHeight = 6000
+
+	WebpThumbnailWidth            = 640
+	WebpThumbnailHeight           = 480
+	WebpExpectedThubmnailChecksum = "5a5f8fcae2e37e504d6e062ee8adefac45ec9102a410faa16d4a0278b310b0c8"
+)

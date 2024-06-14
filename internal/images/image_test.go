@@ -67,3 +67,24 @@ func TestResizeWithRotation(t *testing.T) {
 	assert.Equal(t, testdata.RotatedImageThumbnailWidth, size.Width)
 	assert.Equal(t, testdata.RotatedImageThumbnailHeight, size.Height)
 }
+
+func TestWebpSupport(t *testing.T) {
+	tmp, err := os.MkdirTemp("", "foto-test")
+	assert.Nil(t, err)
+
+	size, err := GetPhotoSize(testdata.WebpTestFile)
+	assert.Equal(t, testdata.WebpTestfileWidth, size.Width)
+	assert.Equal(t, testdata.WebpTestfileHeight, size.Height)
+
+	path := filepath.Join(tmp, "resized.webp")
+
+	err = ResizeImage(testdata.WebpTestFile, path, testdata.WebpThumbnailWidth)
+	assert.Nil(t, err)
+
+	size, err = GetPhotoSize(path)
+	assert.Equal(t, testdata.WebpThumbnailWidth, size.Width)
+	assert.Equal(t, testdata.WebpThumbnailHeight, size.Height)
+
+	checksum, _ := files.Checksum(path)
+	assert.Equal(t, testdata.WebpExpectedThubmnailChecksum, *checksum)
+}
