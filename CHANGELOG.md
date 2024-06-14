@@ -1,3 +1,9 @@
+## v1.3.0 (2024-06-14)
+
+### New feature:
+
+- support webp format (#25)([`162b155`](https://github.com/waynezhang/foto/commit/162b1559f4de4d8dbe17d941261c8c8136f4f9d9))
+
 ## v1.2.2 (2024-02-28)
 
 ### Bugs fixed:
