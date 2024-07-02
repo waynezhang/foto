@@ -12,7 +12,7 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	github.com/tdewolff/minify/v2 v2.20.34
-	golang.org/x/image v0.17.0
+	golang.org/x/image v0.18.0
 )
 
 require (
