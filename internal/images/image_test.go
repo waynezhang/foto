@@ -43,11 +43,11 @@ func TestResizeImage(t *testing.T) {
 
 	path := filepath.Join(tmp, "resized.jpg")
 
-	err = ResizeImage("nonexisting-file.jpg", path, testdata.ThumbnailWidth)
+	err = ResizeImage("nonexisting-file.jpg", path, testdata.ThumbnailWidth, testdata.CompressQuality)
 	assert.True(t, os.IsNotExist(err))
 	assert.False(t, files.IsExisting(path))
 
-	err = ResizeImage(testdata.Testfile, path, testdata.ThumbnailWidth)
+	err = ResizeImage(testdata.Testfile, path, testdata.ThumbnailWidth, testdata.CompressQuality)
 	assert.Nil(t, err)
 
 	checksum, _ := files.Checksum(path)
@@ -60,12 +60,25 @@ func TestResizeWithRotation(t *testing.T) {
 
 	path := filepath.Join(tmp, "resized.jpg")
 
-	err = ResizeImage(testdata.RotatedImageFile, path, testdata.ThumbnailWidth)
+	err = ResizeImage(testdata.RotatedImageFile, path, testdata.ThumbnailWidth, testdata.CompressQuality)
 	assert.Nil(t, err)
 
 	size, _ := GetPhotoSize(path)
 	assert.Equal(t, testdata.RotatedImageThumbnailWidth, size.Width)
 	assert.Equal(t, testdata.RotatedImageThumbnailHeight, size.Height)
+}
+
+func TestCompressQuality(t *testing.T) {
+	tmp, err := os.MkdirTemp("", "foto-test")
+	assert.Nil(t, err)
+
+	path := filepath.Join(tmp, "resized.jpg")
+
+	err = ResizeImage(testdata.Testfile, path, testdata.ThumbnailWidth, testdata.CompressQualityHQ)
+	assert.Nil(t, err)
+
+	checksum, _ := files.Checksum(path)
+	assert.Equal(t, testdata.ExpectedThubmnailHQChecksum, *checksum)
 }
 
 func TestWebpSupport(t *testing.T) {
@@ -78,7 +91,7 @@ func TestWebpSupport(t *testing.T) {
 
 	path := filepath.Join(tmp, "resized.webp")
 
-	err = ResizeImage(testdata.WebpTestFile, path, testdata.WebpThumbnailWidth)
+	err = ResizeImage(testdata.WebpTestFile, path, testdata.WebpThumbnailWidth, testdata.CompressQuality)
 	assert.Nil(t, err)
 
 	size, err = GetPhotoSize(path)

@@ -107,7 +107,7 @@ func handleImage(path string, cfg config.Config, sections []indexer.Section, w h
 		http.NotFound(w, r)
 		return
 	}
-	data, err := images.ResizeData(*dir+"/"+comps[2], int(width))
+	data, err := images.ResizeData(*dir+"/"+comps[2], int(width), cfg.GetExtractOption().CompressQuality)
 	if err != nil {
 		http.NotFound(w, r)
 		return

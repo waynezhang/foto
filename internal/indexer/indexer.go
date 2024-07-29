@@ -26,9 +26,10 @@ type Section struct {
 type ImageSize images.ImageSize
 
 type ImageSet struct {
-	FileName      string
-	ThumbnailSize ImageSize
-	OriginalSize  ImageSize
+	FileName        string
+	ThumbnailSize   ImageSize
+	OriginalSize    ImageSize
+	CompressQuality int
 }
 
 func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Section, error) {
@@ -128,6 +129,7 @@ func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) 
 			originalWidth,
 			originalHeight,
 		},
+		CompressQuality: option.CompressQuality,
 	}, nil
 }
 

@@ -50,15 +50,16 @@ func (ctx defaultExportContext) exportPhotos(
 			slug := s.Slug
 			thumbnailWidth := set.ThumbnailSize.Width
 			originalWidth := set.OriginalSize.Width
+			compressQuality := set.CompressQuality
 			go func() {
 				defer wg.Done()
 
 				thumbnailPath := files.OutputPhotoThumbnailFilePath(outputPath, slug, srcPath)
-				err := resizeImageAndCache(srcPath, thumbnailPath, thumbnailWidth, cache)
+				err := resizeImageAndCache(srcPath, thumbnailPath, thumbnailWidth, compressQuality, cache)
 				utils.CheckFatalError(err, "Failed to generate thumbnail image")
 
 				originalPath := files.OutputPhotoOriginalFilePath(outputPath, slug, srcPath)
-				err = resizeImageAndCache(srcPath, originalPath, originalWidth, cache)
+				err = resizeImageAndCache(srcPath, originalPath, originalWidth, compressQuality, cache)
 				utils.CheckFatalError(err, "Failed to generate original image")
 
 				log.Debug().Msgf("Processing image %s", srcPath)
@@ -109,8 +110,8 @@ func (ctx defaultExportContext) processOtherFolders(folders []string, outputPath
 	}
 }
 
-func resizeImageAndCache(src string, to string, width int, cache cache.Cache) error {
-	cached := cache.CachedImage(src, width)
+func resizeImageAndCache(src string, to string, width int, compressQuality int, cache cache.Cache) error {
+	cached := cache.CachedImage(src, width, compressQuality)
 	if cached != nil {
 		log.Debug().Msgf("Found cached image for %s", src)
 		err := cp.Copy(*cached, to)
@@ -119,12 +120,12 @@ func resizeImageAndCache(src string, to string, width int, cache cache.Cache) er
 		}
 	}
 
-	err := images.ResizeImage(src, to, width)
+	err := images.ResizeImage(src, to, width, compressQuality)
 	if err != nil {
 		return err
 	}
 
-	cache.AddImage(src, width, to)
+	cache.AddImage(src, width, compressQuality, to)
 
 	return nil
 }

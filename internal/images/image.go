@@ -41,9 +41,9 @@ func AspectedHeight(size ImageSize, width int) int {
 	return int(float32(width) * ratio)
 }
 
-func ResizeImage(src string, to string, width int) error {
+func ResizeImage(src string, to string, width int, compressQuality int) error {
 	log.Debug().Msgf("Resizing %s to %d", src, width)
-	data, err := ResizeData(src, width)
+	data, err := ResizeData(src, width, compressQuality)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func ResizeImage(src string, to string, width int) error {
 	return nil
 }
 
-func ResizeData(path string, width int) (*bytes.Buffer, error) {
+func ResizeData(path string, width int, compressQuality int) (*bytes.Buffer, error) {
 	src, err := openImage(path)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,8 @@ func ResizeData(path string, width int) (*bytes.Buffer, error) {
 
 	resized := imaging.Resize(src, width, 0, imaging.Lanczos)
 	buf := new(bytes.Buffer)
-	if err := jpeg.Encode(buf, resized, nil); err != nil {
+	opt := jpeg.Options{Quality: compressQuality}
+	if err := jpeg.Encode(buf, resized, &opt); err != nil {
 		return nil, err
 	}
 

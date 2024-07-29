@@ -13,8 +13,9 @@ type Config interface {
 }
 
 type ExtractOption struct {
-	ThumbnailWidth int
-	OriginalWidth  int
+	ThumbnailWidth  int
+	OriginalWidth   int
+	CompressQuality int
 }
 
 type SectionMetadata struct {

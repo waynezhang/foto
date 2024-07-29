@@ -30,6 +30,10 @@ func NewFileConfig(file string) Config {
 	_ = v.UnmarshalKey("image", &config.option)
 	_ = v.UnmarshalKey("others.folders", &config.otherFolders)
 
+	if config.option.CompressQuality == 0 {
+		config.option.CompressQuality = constants.DefaultCompressQuality
+	}
+
 	log.Debug().Msgf("Config parsed: %v", config)
 
 	return config

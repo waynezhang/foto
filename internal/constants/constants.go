@@ -7,7 +7,8 @@ const (
 	CacheDirectoryName = ".foto"
 	CacheVersion       = "2"
 
-	PhotosURLPath string = "/photos/"
+	PhotosURLPath          string = "/photos/"
+	DefaultCompressQuality        = 75
 )
 
 var (

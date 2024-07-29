@@ -14,8 +14,9 @@ import (
 
 var (
 	defaultOption = config.ExtractOption{
-		ThumbnailWidth: testdata.ThumbnailWidth,
-		OriginalWidth:  testdata.OriginalWidth,
+		ThumbnailWidth:  testdata.ThumbnailWidth,
+		OriginalWidth:   testdata.OriginalWidth,
+		CompressQuality: testdata.CompressQuality,
 	}
 )
 
@@ -103,4 +104,5 @@ func TestBuildImageSet(t *testing.T) {
 	assert.Equal(t, testdata.ThumbnailHeight, set.ThumbnailSize.Height)
 	assert.Equal(t, testdata.OriginalWidth, set.OriginalSize.Width)
 	assert.Equal(t, testdata.OriginalHeight, set.OriginalSize.Height)
+	assert.Equal(t, testdata.CompressQuality, set.CompressQuality)
 }

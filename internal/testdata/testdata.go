@@ -1,7 +1,9 @@
 package testdata
 
 const (
-	TestConfigFile = "../../fs/static/foto.toml"
+	TestConfigFile   = "../../fs/static/foto.toml"
+	TestConfigFileV1 = "../../testdata/foto_v1.toml"
+	TestConfigFileV2 = "../../testdata/foto_v2.toml"
 
 	TestHtmlFile       = "../../fs/static/templates/template.html"
 	TestCssFile        = "../../fs/static/assets/style.css"
@@ -24,6 +26,11 @@ const (
 	ThumbnailHeight           = 480
 	ThumbnailFile             = "../../testdata/testfile-640.jpg"
 	ExpectedThubmnailChecksum = "1c8a6195eefb53be554d86df9de1ae7c5559fa71938be1db595c3bef6c063796"
+
+	CompressQuality = 75
+
+	CompressQualityHQ           = 100
+	ExpectedThubmnailHQChecksum = "2ff919b7f866c18ca835f37c6f550f80b4d39397a172e6fffab44ad93c9023ca"
 )
 
 var (

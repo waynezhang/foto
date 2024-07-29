@@ -112,6 +112,8 @@ foto clear-cache
   thumbnailWidth = 640
   # Width for enlarged images
   originalWidth = 2048
+  # Compress Quality (0~100), higher is better.
+  compressQuality = 75
 
   # Layout for grids
   [layout]
