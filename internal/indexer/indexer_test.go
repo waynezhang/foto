@@ -61,6 +61,19 @@ func TestBuildDuplicatedSlugs(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestBuildEmptySection(t *testing.T) {
+	var meta config.SectionMetadata
+	var emptyMeta config.SectionMetadata
+	_ = mapstructure.Decode(testdata.Collection1, &meta)
+	_ = mapstructure.Decode(testdata.EmptyCollection, &emptyMeta)
+
+	data := []config.SectionMetadata{meta, emptyMeta}
+
+	sections, _ := Build(data, defaultOption)
+	assert.Equal(t, 1, len(sections))
+	assert.Equal(t, testdata.Collection1["title"], sections[0].Title)
+}
+
 func TestBuildImageSets(t *testing.T) {
 	expectedAscendingFileNames := []string{
 		testdata.Collection1FileName1,
@@ -89,7 +102,6 @@ func TestBuildImageSets(t *testing.T) {
 		sets[2].FileName,
 	})
 }
-
 func TestInvalidBuildImageSets(t *testing.T) {
 	tmp, _ := os.MkdirTemp("", "foto-test")
 	path := filepath.Join(tmp, "folder-not-exist")

@@ -56,7 +56,9 @@ func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Se
 		}
 		slugs[slug] = true
 
-		sections = append(sections, s)
+		if len(s.ImageSets) > 0 {
+			sections = append(sections, s)
+		}
 	}
 
 	return sections, nil

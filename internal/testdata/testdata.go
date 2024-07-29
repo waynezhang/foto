@@ -103,6 +103,17 @@ var (
 )
 
 var (
+	EmptyCollection = map[string]interface{}{
+		"title":     "Empty Collection",
+		"text":      "This is an empty collection",
+		"slug":      "empty-slug-section",
+		"folder":    "../../testdata/empty-section",
+		"ascending": true,
+		"imageSets": []map[string]interface{}{},
+	}
+)
+
+var (
 	RotatedImageFile            = "../../testdata/rotated.jpg"
 	RotatedImageWidth           = 1440
 	RotatedImageHeight          = 1080
