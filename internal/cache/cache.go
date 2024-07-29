@@ -7,6 +7,7 @@ import (
 )
 
 type Cache interface {
+	Migrate()
 	AddImage(src string, width int, file string)
 	CachedImage(src string, width int) *string
 	Clear()
@@ -20,6 +21,7 @@ var (
 func Shared() Cache {
 	once.Do(func() {
 		instance = NewFolderCache(constants.CacheDirectoryName)
+		instance.Migrate()
 	})
 	return instance
 }

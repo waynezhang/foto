@@ -24,6 +24,10 @@ type MockCache struct {
 	mock.Mock
 }
 
+func (m *MockCache) Migrate() {
+	m.Called()
+}
+
 func (m *MockCache) AddImage(src string, width int, file string) {
 	m.Called(src, width, file)
 }

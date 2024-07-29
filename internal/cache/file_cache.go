@@ -2,10 +2,12 @@ package cache
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	cp "github.com/otiai10/copy"
 	"github.com/rs/zerolog/log"
+	"github.com/waynezhang/foto/internal/constants"
 	"github.com/waynezhang/foto/internal/files"
 )
 
@@ -19,6 +21,19 @@ func NewFolderCache(directoryName string) Cache {
 	return folderCache{
 		directoryName: directoryName,
 	}
+}
+
+// Purge the cache if it's not compatible
+func (cache folderCache) Migrate() {
+	ver := cache.version()
+	if ver == constants.CacheVersion {
+		return
+	}
+
+	log.Debug().Msgf("Cache version is not compatible to new version(%s), purging", constants.CacheDirectoryName)
+
+	cache.Clear()
+	cache.writeVersion(constants.CacheVersion)
 }
 
 // `src` is used to compute checksum, `file` will be copied to the cache
@@ -63,4 +78,18 @@ func (cache folderCache) Clear() {
 
 func (cache folderCache) imagePath(checksum string, width int) string {
 	return filepath.Join(cache.directoryName, fmt.Sprintf("%s-%d", checksum, width))
+}
+
+func (cache folderCache) version() string {
+	path := filepath.Join(cache.directoryName, "version")
+	ver, err := os.ReadFile(path)
+	if err != nil {
+		return ""
+	}
+	return string(ver)
+}
+
+func (cache folderCache) writeVersion(ver string) {
+	path := filepath.Join(cache.directoryName, "version")
+	files.WriteDataToFile([]byte(ver), path)
 }
