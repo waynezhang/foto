@@ -1,3 +1,15 @@
+## v1.4.0 (2024-07-29)
+
+### New feature:
+
+- #34 add `compressQuality` option to configuration file([`c55cfe0`](https://github.com/waynezhang/foto/commit/c55cfe06ae5e1f23e1f6054ac6a42708d23b1952))
+- cache versioning([`ea1582a`](https://github.com/waynezhang/foto/commit/ea1582a7e3213f81157d6258468e132581fffcf2))
+
+### Bugs fixed:
+
+- #33 don't show empty section([`62ff944`](https://github.com/waynezhang/foto/commit/62ff944469dab2ddb84854f43e283db57af2d0e0))
+
+
 ## v1.3.0 (2024-06-14)
 
 ### New feature:
