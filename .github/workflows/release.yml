@@ -15,18 +15,18 @@ jobs:
         fetch-depth: 0
     
     - name: Set up Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v5
       with:
         go-version: 1.21.5
 
     - name: Generate change log
-      run: go run github.com/release-lab/whatchanged/cmd/whatchanged@latest @0~@1 > /tmp/release-note.md
+      run: go run github.com/release-lab/whatchanged/cmd/whatchanged@latest @0 > /tmp/release-note.md
 
     - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v5
+      uses: goreleaser/goreleaser-action@v6
       with:
         distribution: goreleaser
-        version: latest
+        version: '~> v2'
         args: release --clean --release-notes /tmp/release-note.md
       env:
         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
