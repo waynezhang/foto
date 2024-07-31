@@ -10,6 +10,8 @@ import (
 )
 
 func Execute() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
 	var verbose bool
 	var rootCmd = &cobra.Command{
 		Use:   "foto",
@@ -18,7 +20,6 @@ func Execute() {
 			_ = cmd.Help()
 		},
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 			if verbose {
 				zerolog.SetGlobalLevel(zerolog.DebugLevel)
 			} else {
