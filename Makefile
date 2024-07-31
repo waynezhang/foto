@@ -20,7 +20,11 @@ coverage:
 		go tool cover -html $$TMPFILE
 
 changelog:
-	@whatchanged HEAD > CHANGELOG.md
+	@TMP_FILE=$$(mktemp); \
+	cat CHANGELOG.md > $$TMP_FILE; \
+	go run github.com/release-lab/whatchanged/cmd/whatchanged@latest > CHANGELOG.md; \
+	echo "\n" >> CHANGELOG.md; \
+	cat $$TMP_FILE >> CHANGELOG.md
 
 .PHONY: install
 install:
