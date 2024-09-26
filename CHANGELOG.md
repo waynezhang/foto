@@ -1,3 +1,10 @@
+## v1.5.0 (2024-09-26)
+
+### New feature:
+
+- Add options to customize lightbox([`de1e6e4`](https://github.com/waynezhang/foto/commit/de1e6e4ad1414621e1a404104a39ee78b1a0ddb4))
+
+
 ## v1.4.0 (2024-07-29)
 
 ### New feature:
