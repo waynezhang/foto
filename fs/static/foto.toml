@@ -23,6 +23,19 @@ link = "https://instagram.com/xxx"
 icon = "assets/icons/twitter.svg"
 link = "https://twitter.com/xxx"
 
+# Lightbox options
+[lightbox]
+# Show Previous Arrow
+show_arrow_prev = true
+# Show Next Arrow
+show_arrow_next = true
+# Show Zoom Icon
+show_zoom       = true
+# Show Close Icon
+show_close      = true
+# Show Image Count
+show_counter    = true
+
 # Setttings for photo size
 [image]
 # Width for thumbnail images
