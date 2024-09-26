@@ -3,7 +3,7 @@ package constants
 import "path/filepath"
 
 const (
-	PhotoSwipeVersion  = "5.4.2"
+	PhotoSwipeVersion  = "5.4.4"
 	CacheDirectoryName = ".foto"
 	CacheVersion       = "2"
 
