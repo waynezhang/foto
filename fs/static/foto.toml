@@ -25,16 +25,14 @@ link = "https://twitter.com/xxx"
 
 # Lightbox options
 [lightbox]
-# Show Previous Arrow
-show_arrow_prev = true
-# Show Next Arrow
-show_arrow_next = true
+# Show Navitation Arrows
+show_arrows  = true
 # Show Zoom Icon
-show_zoom       = true
+show_zoom    = true
 # Show Close Icon
-show_close      = true
+show_close   = true
 # Show Image Count
-show_counter    = true
+show_counter = true
 
 # Setttings for photo size
 [image]
