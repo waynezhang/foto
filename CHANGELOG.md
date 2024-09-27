@@ -1,3 +1,10 @@
+## v1.5.1 (2024-09-27)
+
+### New feature:
+
+- consolidate navigation arrows of lightbox to single option([`003a432`](https://github.com/waynezhang/foto/commit/003a432ff22aab0af6c8c41c57edc41870f215e9))
+
+
 ## v1.5.0 (2024-09-26)
 
 ### New feature:
