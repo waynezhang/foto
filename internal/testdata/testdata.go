@@ -130,3 +130,13 @@ var (
 	WebpThumbnailHeight           = 480
 	WebpExpectedThubmnailChecksum = "5a5f8fcae2e37e504d6e062ee8adefac45ec9102a410faa16d4a0278b310b0c8"
 )
+
+var (
+	PngTestFile       = "../../testdata/png/test.png"
+	PngTestfileWidth  = 1024
+	PngTestfileHeight = 768
+
+	PngThumbnailWidth            = 640
+	PngThumbnailHeight           = 480
+	PngExpectedThubmnailChecksum = "c52322af93c85de909aa5774f58ab2b26ad13f95e405f4ce42703468f3490ab3"
+)

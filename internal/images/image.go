@@ -6,6 +6,7 @@ import (
 	"image/jpeg"
 	_ "image/jpeg"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/disintegration/imaging"
@@ -20,8 +21,9 @@ type ImageSize struct {
 }
 
 func IsPhotoSupported(path string) bool {
-	lowerExt := strings.ToLower(filepath.Ext(path))
-	return lowerExt == ".jpeg" || lowerExt == ".jpg" || lowerExt == ".webp"
+	return slices.Contains(
+		[]string{".jpeg", ".jpg", ".webp", ".png"},
+		strings.ToLower(filepath.Ext(path)))
 }
 
 func GetPhotoSize(path string) (*ImageSize, error) {

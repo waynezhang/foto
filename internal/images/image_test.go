@@ -14,7 +14,8 @@ func TestPhotoSupport(t *testing.T) {
 	assert.True(t, IsPhotoSupported("photo.jpg"))
 	assert.True(t, IsPhotoSupported("photo.jpeg"))
 	assert.True(t, IsPhotoSupported("photo.webp"))
-	assert.False(t, IsPhotoSupported("photo.png"))
+	assert.True(t, IsPhotoSupported("photo.png"))
+	assert.False(t, IsPhotoSupported("photo.xxx"))
 }
 
 func TestGetPhotoSize(t *testing.T) {
@@ -100,4 +101,25 @@ func TestWebpSupport(t *testing.T) {
 
 	checksum, _ := files.Checksum(path)
 	assert.Equal(t, testdata.WebpExpectedThubmnailChecksum, *checksum)
+}
+
+func TestPngSupport(t *testing.T) {
+	tmp, err := os.MkdirTemp("", "foto-test")
+	assert.Nil(t, err)
+
+	size, err := GetPhotoSize(testdata.PngTestFile)
+	assert.Equal(t, testdata.PngTestfileWidth, size.Width)
+	assert.Equal(t, testdata.PngTestfileHeight, size.Height)
+
+	path := filepath.Join(tmp, "resized.png")
+
+	err = ResizeImage(testdata.PngTestFile, path, testdata.PngThumbnailWidth, testdata.CompressQuality)
+	assert.Nil(t, err)
+
+	size, err = GetPhotoSize(path)
+	assert.Equal(t, testdata.PngThumbnailWidth, size.Width)
+	assert.Equal(t, testdata.PngThumbnailHeight, size.Height)
+
+	checksum, _ := files.Checksum(path)
+	assert.Equal(t, testdata.PngExpectedThubmnailChecksum, *checksum)
 }
