@@ -1,3 +1,14 @@
+## v1.5.2 (2024-11-25)
+
+### New feature:
+
+- #43 Add PNG support([`eb850eb`](https://github.com/waynezhang/foto/commit/eb850eb03967107a73c1f2fc502f57cc793f3bb6))
+
+### Bugs fixed:
+
+- **logger**: init logger in the very beginning([`43862f5`](https://github.com/waynezhang/foto/commit/43862f5d853fa8794747674d1adc0ffd3e86d9f0))
+
+
 ## v1.5.1 (2024-09-27)
 
 ### New feature:
