@@ -25,6 +25,21 @@ $ brew install foto
 
 Or download the binary from [here](https://github.com/waynezhang/foto/releases)
 
+### Nix/NixOS
+
+for Nix users, a Flake is provided. It can be used to run the application
+directly or add the package to your configuration as flake input.
+
+It also allows to try out foto, without permanent installation.
+
+```sh
+nix run github:waynezhang/foto
+```
+
+Consult the [Nix
+manual](https://nix.dev/manual/nix/2.25/command-ref/new-cli/nix3-flake.html) for
+details.
+
 ### Other platforms
 
 Download the binary from [here](https://github.com/waynezhang/foto/releases)
