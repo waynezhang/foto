@@ -11,7 +11,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
-	github.com/tdewolff/minify/v2 v2.21.1
+	github.com/tdewolff/minify/v2 v2.21.2
 	golang.org/x/image v0.23.0
 )
 
@@ -34,7 +34,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	github.com/tdewolff/parse/v2 v2.7.18 // indirect
+	github.com/tdewolff/parse/v2 v2.7.19 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20240103183307-be819d1f06fc // indirect
 	golang.org/x/sync v0.10.0 // indirect
