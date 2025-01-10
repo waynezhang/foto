@@ -33,7 +33,7 @@
       </header>
       <div id="gallery" class="gallery">
           {{- range $section := .Sections }}
-          <div class="section">
+          <div class="section" id="{{ .Slug }}">
             <div class="section-header-wrapper">
               <div class="section-title">
                 {{ .Title }}
