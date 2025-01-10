@@ -1,3 +1,10 @@
+## v1.5.3 (2025-01-10)
+
+### New feature:
+
+- add id to section (#51)([`5a48bcb`](https://github.com/waynezhang/foto/commit/5a48bcb379e9112d33ab73a56c53cb5f41de6901))
+
+
 ## v1.5.2 (2024-11-25)
 
 ### New feature:
