@@ -47,13 +47,15 @@ func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Se
 		}
 
 		log.Debug().Msgf("Extacting section [%s][/%s] %s", val.Title, val.Slug, val.Folder)
+
+		sectionOption := sectionExtractOption(option, val)
 		s := Section{
 			Title:     val.Title,
 			Text:      val.Text,
 			Slug:      slug,
 			Folder:    val.Folder,
 			Ascending: val.Ascending,
-			ImageSets: buildImageSets(val.Folder, val.Ascending, option),
+			ImageSets: buildImageSets(val.Folder, val.Ascending, sectionOption),
 		}
 		slugs[slug] = true
 
@@ -160,4 +162,18 @@ func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) 
 func validSlug(slug string) bool {
 	matched, _ := regexp.MatchString("^[a-zA-Z0-9-_]+$", slug)
 	return matched
+}
+
+func sectionExtractOption(global config.ExtractOption, metadata config.SectionMetadata) config.ExtractOption {
+	sectionOption := global
+	if metadata.ThumbnailWidth > 0 || metadata.ThumbnailHeight > 0 {
+		sectionOption.ThumbnailWidth = metadata.ThumbnailWidth
+		sectionOption.ThumbnailHeight = metadata.ThumbnailHeight
+	}
+	if metadata.OriginalWidth > 0 || metadata.OriginalHeight > 0 {
+		sectionOption.OriginalWidth = metadata.OriginalWidth
+		sectionOption.OriginalHeight = metadata.OriginalHeight
+	}
+
+	return sectionOption
 }

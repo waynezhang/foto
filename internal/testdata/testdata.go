@@ -73,11 +73,13 @@ var (
 
 var (
 	Collection2 = map[string]interface{}{
-		"title":     "Section 2",
-		"text":      "This is Section 2",
-		"slug":      "slug-section-2",
-		"folder":    "../../testdata/collection-2",
-		"ascending": false,
+		"title":           "Section 2",
+		"text":            "This is Section 2",
+		"slug":            "slug-section-2",
+		"folder":          "../../testdata/collection-2",
+		"ascending":       false,
+		"ThumbnailHeight": 100,
+		"OriginalHeight":  400,
 		"imageSets": []map[string]interface{}{
 			{
 				"fileName":      "2022-09-28.jpg",
