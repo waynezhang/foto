@@ -25,10 +25,16 @@ link = "https://twitter.com/xxx"
 
 # Setttings for photo size
 [image]
-# Width for thumbnail images
+# Width for thumbnail images (set either width or height, or both)
 thumbnailWidth = 640
-# Width for enlarged images
+# Height for thumbnail images
+# thumbnailHeight = 0
+
+# Width for enlarged images (set either width or height, or both)
 originalWidth = 2048
+# Height for enlarged images
+# originalHeight = 0
+
 # Compress Quality (0~100), higher is better.
 compressQuality = 88
 
