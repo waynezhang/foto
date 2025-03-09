@@ -1,3 +1,10 @@
+## v1.6.0 (2025-03-10)
+
+### New feature
+
+- [#57](https://github.com/waynezhang/foto/issues/57) add height setting ([#58](https://github.com/waynezhang/foto/issues/58)), allow image size override per section ([1c58266](https://github.com/waynezhang/foto/commit/1c582664c6e9c5c88fa447f3d5c7efbaaaedc0e9))
+
+
 ## v1.5.3 (2025-01-10)
 
 ### New feature:
