@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Function to print usage
+print_usage() {
+    echo "Usage: $0 [version_tag]"
+    echo "If version_tag is not provided, the newest tag will be used"
+    exit 1
+}
+
+# Function to get the latest tag
+get_latest_tag() {
+    git describe --tags --abbrev=0 2>/dev/null
+}
+
+# Function to get the previous tag given a tag
+get_previous_tag() {
+    local current_tag=$1
+    git describe --tags --abbrev=0 "$current_tag"^ 2>/dev/null
+}
+
+# Function to get repository URL
+get_repo_url() {
+    local remote_url=$(git config --get remote.origin.url)
+    # Convert SSH URL to HTTPS if needed
+    echo "$remote_url" | sed -E 's|git@([^:]+):|https://\1/|; s|\.git$||'
+}
+
+# Function to get display name for type
+get_type_name() {
+    case "$1" in
+        "feat") echo "New feature" ;;
+        "fix") echo "Fix" ;;
+        "refactor") echo "Refactor" ;;
+        *) echo "$1" ;;
+    esac
+}
+
+# Get version tag from argument or use latest tag
+if [ $# -eq 1 ]; then
+    VERSION_TAG=$1
+else
+    VERSION_TAG=$(get_latest_tag)
+    if [ -z "$VERSION_TAG" ]; then
+        echo "Error: No tags found in repository"
+        exit 1
+    fi
+fi
+
+# Get previous tag
+PREVIOUS_TAG=$(get_previous_tag "$VERSION_TAG")
+if [ -z "$PREVIOUS_TAG" ]; then
+    echo "Error: No previous tag found for $VERSION_TAG"
+    exit 1
+fi
+
+# Get repository URL
+REPO_URL=$(get_repo_url)
+
+# Print version header
+echo "## $VERSION_TAG ($(date '+%Y-%m-%d'))"
+echo
+
+# Function to process PR numbers in message
+process_pr_numbers() {
+    local message=$1
+    echo "$message" | sed -E "s|#([0-9]+)|[#\1]($REPO_URL/issues/\1)|g"
+    }
+
+# Array of conventional commit types to process
+types="feat fix refactor"
+
+for type in $types; do
+    # Get non-merge commits that start with the type
+    commits=$(git log --pretty=format:"%s|%H" "$PREVIOUS_TAG..$VERSION_TAG" | \
+        grep -v "^Merge" | \
+        grep "^$type: " | \
+        sort -u)
+
+    if [ ! -z "$commits" ]; then
+        echo "### $(get_type_name $type)"
+        echo
+
+        while IFS='|' read -r message hash; do
+            # Remove the type prefix from message
+            clean_message=$(echo "$message" | sed -E "s/^$type: //")
+            # Process PR numbers in message
+            linked_message=$(process_pr_numbers "$clean_message")
+            short_hash=$(echo "$hash" | cut -c1-7)
+            echo "- $linked_message ([$short_hash]($REPO_URL/commit/$hash))"
+        done <<< "$commits"
+        echo
+    fi
+done

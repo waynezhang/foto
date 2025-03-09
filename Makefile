@@ -22,8 +22,8 @@ coverage:
 changelog:
 	@TMP_FILE=$$(mktemp); \
 	cat CHANGELOG.md > $$TMP_FILE; \
-	go run github.com/release-lab/whatchanged/cmd/whatchanged@latest > CHANGELOG.md; \
-	echo "\n" >> CHANGELOG.md; \
+	./script/changelog HEAD > CHANGELOG.md; \
+	echo "" >> CHANGELOG.md; \
 	cat $$TMP_FILE >> CHANGELOG.md
 
 .PHONY: install
