@@ -17,10 +17,10 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: 1.21.5
+        go-version: 1.24.1
 
     - name: Generate change log
-      run: go run github.com/release-lab/whatchanged/cmd/whatchanged@latest @0 > /tmp/release-note.md
+      run: ./scripts/changelog > /tmp/release-note.md
 
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v6
