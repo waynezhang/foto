@@ -1,6 +1,6 @@
 module github.com/waynezhang/foto
 
-go 1.23.4
+go 1.24.1
 
 require (
 	github.com/chelnak/ysmrr v0.6.0
