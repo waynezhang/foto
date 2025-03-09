@@ -1,6 +1,7 @@
 package indexer
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"os"
@@ -46,13 +47,15 @@ func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Se
 		}
 
 		log.Debug().Msgf("Extacting section [%s][/%s] %s", val.Title, val.Slug, val.Folder)
+
+		sectionOption := sectionExtractOption(option, val)
 		s := Section{
 			Title:     val.Title,
 			Text:      val.Text,
 			Slug:      slug,
 			Folder:    val.Folder,
 			Ascending: val.Ascending,
-			ImageSets: buildImageSets(val.Folder, val.Ascending, option),
+			ImageSets: buildImageSets(val.Folder, val.Ascending, sectionOption),
 		}
 		slugs[slug] = true
 
@@ -116,10 +119,31 @@ func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) 
 	}
 
 	thumbnailWidth := option.ThumbnailWidth
-	thumbnailHeight := images.AspectedHeight(*imageSize, thumbnailWidth)
+	thumbnailHeight := option.ThumbnailHeight
 
+	// If both width and height are specified, use them as is
+	// If only one is specified, calculate the other to maintain aspect ratio
+	if thumbnailWidth > 0 && thumbnailHeight == 0 {
+		thumbnailHeight = images.AspectedHeight(*imageSize, thumbnailWidth)
+	} else if thumbnailWidth == 0 && thumbnailHeight > 0 {
+		thumbnailWidth = images.AspectedWidth(*imageSize, thumbnailHeight)
+	} else if thumbnailWidth == 0 && thumbnailHeight == 0 {
+		return nil, errors.New("Either thumbnailWidth or thumbnailHeight should be set")
+	}
+
+	// Handle original size
 	originalWidth := option.OriginalWidth
-	originalHeight := images.AspectedHeight(*imageSize, originalWidth)
+	originalHeight := option.OriginalHeight
+
+	// If both width and height are specified, use them as is
+	// If only one is specified, calculate the other to maintain aspect ratio
+	if originalWidth > 0 && originalHeight == 0 {
+		originalHeight = images.AspectedHeight(*imageSize, originalWidth)
+	} else if originalWidth == 0 && originalHeight > 0 {
+		originalWidth = images.AspectedWidth(*imageSize, originalHeight)
+	} else if originalWidth == 0 && originalHeight == 0 {
+		return nil, errors.New("Either originalWidth or originalHeight should be set")
+	}
 
 	return &ImageSet{
 		FileName: filepath.Base(path),
@@ -138,4 +162,18 @@ func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) 
 func validSlug(slug string) bool {
 	matched, _ := regexp.MatchString("^[a-zA-Z0-9-_]+$", slug)
 	return matched
+}
+
+func sectionExtractOption(global config.ExtractOption, metadata config.SectionMetadata) config.ExtractOption {
+	sectionOption := global
+	if metadata.ThumbnailWidth > 0 || metadata.ThumbnailHeight > 0 {
+		sectionOption.ThumbnailWidth = metadata.ThumbnailWidth
+		sectionOption.ThumbnailHeight = metadata.ThumbnailHeight
+	}
+	if metadata.OriginalWidth > 0 || metadata.OriginalHeight > 0 {
+		sectionOption.OriginalWidth = metadata.OriginalWidth
+		sectionOption.OriginalHeight = metadata.OriginalHeight
+	}
+
+	return sectionOption
 }

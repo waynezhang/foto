@@ -49,17 +49,19 @@ func (ctx defaultExportContext) exportPhotos(
 
 			slug := s.Slug
 			thumbnailWidth := set.ThumbnailSize.Width
+			thumbnailHeight := set.ThumbnailSize.Height
 			originalWidth := set.OriginalSize.Width
+			originalHeight := set.OriginalSize.Height
 			compressQuality := set.CompressQuality
 			go func() {
 				defer wg.Done()
 
 				thumbnailPath := files.OutputPhotoThumbnailFilePath(outputPath, slug, srcPath)
-				err := resizeImageAndCache(srcPath, thumbnailPath, thumbnailWidth, compressQuality, cache)
+				err := resizeImageAndCache(srcPath, thumbnailPath, thumbnailWidth, thumbnailHeight, compressQuality, cache)
 				utils.CheckFatalError(err, "Failed to generate thumbnail image")
 
 				originalPath := files.OutputPhotoOriginalFilePath(outputPath, slug, srcPath)
-				err = resizeImageAndCache(srcPath, originalPath, originalWidth, compressQuality, cache)
+				err = resizeImageAndCache(srcPath, originalPath, originalWidth, originalHeight, compressQuality, cache)
 				utils.CheckFatalError(err, "Failed to generate original image")
 
 				log.Debug().Msgf("Processing image %s", srcPath)
@@ -110,8 +112,8 @@ func (ctx defaultExportContext) processOtherFolders(folders []string, outputPath
 	}
 }
 
-func resizeImageAndCache(src string, to string, width int, compressQuality int, cache cache.Cache) error {
-	cached := cache.CachedImage(src, width, compressQuality)
+func resizeImageAndCache(src string, to string, width int, height int, compressQuality int, cache cache.Cache) error {
+	cached := cache.CachedImage(src, width, height, compressQuality)
 	if cached != nil {
 		log.Debug().Msgf("Found cached image for %s", src)
 		err := cp.Copy(*cached, to)
@@ -120,12 +122,12 @@ func resizeImageAndCache(src string, to string, width int, compressQuality int, 
 		}
 	}
 
-	err := images.ResizeImage(src, to, width, compressQuality)
+	err := images.ResizeImage(src, to, width, height, compressQuality)
 	if err != nil {
 		return err
 	}
 
-	cache.AddImage(src, width, compressQuality, to)
+	cache.AddImage(src, width, height, compressQuality, to)
 
 	return nil
 }

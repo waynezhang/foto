@@ -8,8 +8,8 @@ import (
 
 type Cache interface {
 	Migrate()
-	AddImage(src string, width int, compressQuality int, file string)
-	CachedImage(src string, compressQuality int, width int) *string
+	AddImage(src string, width int, height int, compressQuality int, file string)
+	CachedImage(src string, width int, height int, compressQuality int) *string
 	Clear()
 }
 

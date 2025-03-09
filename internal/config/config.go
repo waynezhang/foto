@@ -14,16 +14,22 @@ type Config interface {
 
 type ExtractOption struct {
 	ThumbnailWidth  int
+	ThumbnailHeight int
 	OriginalWidth   int
+	OriginalHeight  int
 	CompressQuality int
 }
 
 type SectionMetadata struct {
-	Title     string
-	Text      template.HTML
-	Slug      string
-	Folder    string
-	Ascending bool
+	Title           string
+	Text            template.HTML
+	Slug            string
+	Folder          string
+	Ascending       bool
+	ThumbnailWidth  int
+	ThumbnailHeight int
+	OriginalWidth   int
+	OriginalHeight  int
 }
 
 var (
