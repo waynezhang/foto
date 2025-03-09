@@ -22,7 +22,7 @@ coverage:
 changelog:
 	@TMP_FILE=$$(mktemp); \
 	cat CHANGELOG.md > $$TMP_FILE; \
-	./script/changelog HEAD > CHANGELOG.md; \
+	./scripts/changelog HEAD > CHANGELOG.md; \
 	echo "" >> CHANGELOG.md; \
 	cat $$TMP_FILE >> CHANGELOG.md
 
