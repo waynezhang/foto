@@ -98,16 +98,18 @@ func handleImage(path string, cfg config.Config, sections []indexer.Section, w h
 	}
 
 	key := comps[1]
-	var width int
+	var width, height int
 	if key == "thumbnail" {
 		width = cfg.GetExtractOption().ThumbnailWidth
+		height = cfg.GetExtractOption().ThumbnailHeight
 	} else if key == "original" {
 		width = cfg.GetExtractOption().OriginalWidth
+		height = cfg.GetExtractOption().OriginalHeight
 	} else {
 		http.NotFound(w, r)
 		return
 	}
-	data, err := images.ResizeData(*dir+"/"+comps[2], int(width), cfg.GetExtractOption().CompressQuality)
+	data, err := images.ResizeData(*dir+"/"+comps[2], int(width), int(height), cfg.GetExtractOption().CompressQuality)
 	if err != nil {
 		http.NotFound(w, r)
 		return

@@ -5,7 +5,7 @@ import "path/filepath"
 const (
 	PhotoSwipeVersion  = "5.4.4"
 	CacheDirectoryName = ".foto"
-	CacheVersion       = "2"
+	CacheVersion       = "3"
 
 	PhotosURLPath          string = "/photos/"
 	DefaultCompressQuality        = 75

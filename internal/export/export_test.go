@@ -28,12 +28,12 @@ func (m *MockCache) Migrate() {
 	m.Called()
 }
 
-func (m *MockCache) AddImage(src string, width int, compressQuality int, file string) {
-	m.Called(src, width, compressQuality, file)
+func (m *MockCache) AddImage(src string, width int, height int, compressQuality int, file string) {
+	m.Called(src, width, height, compressQuality, file)
 }
 
-func (m *MockCache) CachedImage(src string, width int, compressQuality int) *string {
-	arg := m.Called(src, width, compressQuality).Get(0)
+func (m *MockCache) CachedImage(src string, width int, height int, compressQuality int) *string {
+	arg := m.Called(src, width, height, compressQuality).Get(0)
 	if arg == nil {
 		return nil
 	}
@@ -266,30 +266,31 @@ func TestResizeImageCache(t *testing.T) {
 	src := testdata.Testfile
 	dst := filepath.Join(tmp, "resized.jpg")
 	width := testdata.ThumbnailWidth
+	height := 0
 	compressQuality := testdata.CompressQuality
 	cachedFile := testdata.ThumbnailFile
 
 	// non cached
 	cache1 := new(MockCache)
 
-	cache1.On("CachedImage", src, width, compressQuality).Return(nil)
-	cache1.On("AddImage", src, width, compressQuality, dst).Return(nil)
+	cache1.On("CachedImage", src, width, height, compressQuality).Return(nil)
+	cache1.On("AddImage", src, width, height, compressQuality, dst).Return(nil)
 
-	err := resizeImageAndCache(src, dst, width, compressQuality, cache1)
+	err := resizeImageAndCache(src, dst, width, height, compressQuality, cache1)
 	assert.Nil(t, err)
-	cache1.AssertCalled(t, "CachedImage", src, width, compressQuality)
-	cache1.AssertCalled(t, "AddImage", src, width, compressQuality, dst)
+	cache1.AssertCalled(t, "CachedImage", src, width, height, compressQuality)
+	cache1.AssertCalled(t, "AddImage", src, width, height, compressQuality, dst)
 
 	// cached
 	cache2 := new(MockCache)
 
-	cache2.On("CachedImage", src, width, compressQuality).Return(&cachedFile)
-	cache2.On("AddImage", src, width, compressQuality, dst).Unset()
+	cache2.On("CachedImage", src, width, height, compressQuality).Return(&cachedFile)
+	cache2.On("AddImage", src, width, height, compressQuality, dst).Unset()
 
-	err = resizeImageAndCache(src, dst, width, testdata.CompressQuality, cache2)
+	err = resizeImageAndCache(src, dst, width, height, compressQuality, cache2)
 	assert.Nil(t, err)
-	cache2.AssertCalled(t, "CachedImage", src, width, compressQuality)
-	cache2.AssertNotCalled(t, "AddImage", src, width, compressQuality, dst)
+	cache2.AssertCalled(t, "CachedImage", src, width, height, compressQuality)
+	cache2.AssertNotCalled(t, "AddImage", src, width, height, compressQuality, dst)
 }
 
 func TestMinimizer(t *testing.T) {

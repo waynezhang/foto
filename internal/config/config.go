@@ -14,7 +14,9 @@ type Config interface {
 
 type ExtractOption struct {
 	ThumbnailWidth  int
+	ThumbnailHeight int
 	OriginalWidth   int
+	OriginalHeight  int
 	CompressQuality int
 }
 

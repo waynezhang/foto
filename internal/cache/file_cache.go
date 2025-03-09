@@ -37,13 +37,13 @@ func (cache folderCache) Migrate() {
 }
 
 // `src` is used to compute checksum, `file` will be copied to the cache
-func (cache folderCache) AddImage(src string, width int, compressQuality int, file string) {
+func (cache folderCache) AddImage(src string, width int, height int, compressQuality int, file string) {
 	checksum, err := files.Checksum(src)
 	if err != nil {
 		return
 	}
 
-	path := cache.imagePath(*checksum, width, compressQuality)
+	path := cache.imagePath(*checksum, width, height, compressQuality)
 	log.Debug().Msgf("Add cache image %s for %s", path, src)
 	err = files.EnsureParentDirectory(path)
 	if err != nil {
@@ -53,14 +53,14 @@ func (cache folderCache) AddImage(src string, width int, compressQuality int, fi
 	_ = cp.Copy(file, path)
 }
 
-func (cache folderCache) CachedImage(src string, width int, compressQuality int) *string {
+func (cache folderCache) CachedImage(src string, width int, height int, compressQuality int) *string {
 	checksum, err := files.Checksum(src)
 	if err != nil {
 		log.Warn().Msgf("Failed to generate file hash %s (%s).", src, err.Error())
 		return nil
 	}
 
-	path := cache.imagePath(*checksum, width, compressQuality)
+	path := cache.imagePath(*checksum, width, height, compressQuality)
 	if !files.IsExisting(path) {
 		return nil
 	}
@@ -76,8 +76,8 @@ func (cache folderCache) Clear() {
 	_ = files.PruneDirectory(dir)
 }
 
-func (cache folderCache) imagePath(checksum string, width int, compressQuality int) string {
-	return filepath.Join(cache.directoryName, fmt.Sprintf("%s-%d-%d", checksum, width, compressQuality))
+func (cache folderCache) imagePath(checksum string, width int, height int, compressQuality int) string {
+	return filepath.Join(cache.directoryName, fmt.Sprintf("%s-%d-%d-%d", checksum, width, height, compressQuality))
 }
 
 func (cache folderCache) version() string {

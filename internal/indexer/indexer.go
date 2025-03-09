@@ -1,6 +1,7 @@
 package indexer
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"os"
@@ -116,10 +117,31 @@ func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) 
 	}
 
 	thumbnailWidth := option.ThumbnailWidth
-	thumbnailHeight := images.AspectedHeight(*imageSize, thumbnailWidth)
+	thumbnailHeight := option.ThumbnailHeight
 
+	// If both width and height are specified, use them as is
+	// If only one is specified, calculate the other to maintain aspect ratio
+	if thumbnailWidth > 0 && thumbnailHeight == 0 {
+		thumbnailHeight = images.AspectedHeight(*imageSize, thumbnailWidth)
+	} else if thumbnailWidth == 0 && thumbnailHeight > 0 {
+		thumbnailWidth = images.AspectedWidth(*imageSize, thumbnailHeight)
+	} else if thumbnailWidth == 0 && thumbnailHeight == 0 {
+		return nil, errors.New("Either thumbnailWidth or thumbnailHeight should be set")
+	}
+
+	// Handle original size
 	originalWidth := option.OriginalWidth
-	originalHeight := images.AspectedHeight(*imageSize, originalWidth)
+	originalHeight := option.OriginalHeight
+
+	// If both width and height are specified, use them as is
+	// If only one is specified, calculate the other to maintain aspect ratio
+	if originalWidth > 0 && originalHeight == 0 {
+		originalHeight = images.AspectedHeight(*imageSize, originalWidth)
+	} else if originalWidth == 0 && originalHeight > 0 {
+		originalWidth = images.AspectedWidth(*imageSize, originalHeight)
+	} else if originalWidth == 0 && originalHeight == 0 {
+		return nil, errors.New("Either originalWidth or originalHeight should be set")
+	}
 
 	return &ImageSet{
 		FileName: filepath.Base(path),
