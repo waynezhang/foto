@@ -21,23 +21,23 @@ func TestFolderCache(t *testing.T) {
 
 	assert.Equal(t, dirName, cache.directoryName)
 
-	img := cache.CachedImage(testdata.Testfile, 640, testdata.CompressQuality)
+	img := cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQuality)
 	assert.Nil(t, img)
 
-	cache.AddImage(testdata.Testfile, 640, testdata.CompressQuality, testdata.ThumbnailFile)
-	img = cache.CachedImage(testdata.Testfile, 640, testdata.CompressQuality)
-	expectedPath := fmt.Sprintf("%s/%s-640-%d", dirName, testdata.ExpectedChecksum, testdata.CompressQuality)
+	cache.AddImage(testdata.Testfile, 640, 480, testdata.CompressQuality, testdata.ThumbnailFile)
+	img = cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQuality)
+	expectedPath := fmt.Sprintf("%s/%s-640-480-%d", dirName, testdata.ExpectedChecksum, testdata.CompressQuality)
 	assert.Equal(t, expectedPath, *img)
 
 	// no file for different compressQuality
-	assert.Nil(t, cache.CachedImage(testdata.Testfile, 640, testdata.CompressQualityHQ))
+	assert.Nil(t, cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQualityHQ))
 
 	resizedChecksum, _ := files.Checksum(expectedPath)
 	assert.Equal(t, testdata.ExpectedThubmnailChecksum, *resizedChecksum)
 
 	// no failure on invalid file
-	cache.AddImage("nonexisting-file.jpg", 640, testdata.CompressQuality, testdata.ThumbnailFile)
-	img = cache.CachedImage("nonexisting-file.jpg", testdata.CompressQuality, 640)
+	cache.AddImage("nonexisting-file.jpg", 640, 480, testdata.CompressQuality, testdata.ThumbnailFile)
+	img = cache.CachedImage("nonexisting-file.jpg", 640, 480, testdata.CompressQuality)
 	assert.Nil(t, img)
 
 	cache.Clear()
@@ -55,8 +55,8 @@ func TestShared(t *testing.T) {
 
 func TestImagePath(t *testing.T) {
 	cache := NewFolderCache("some-path").(folderCache)
-	path := cache.imagePath("some-checksum", 200, 75)
-	assert.Equal(t, "some-path/some-checksum-200-75", path)
+	path := cache.imagePath("some-checksum", 200, 150, 75)
+	assert.Equal(t, "some-path/some-checksum-200-150-75", path)
 }
 
 // no version
@@ -68,13 +68,13 @@ func TestVersioning1(t *testing.T) {
 	cache := NewFolderCache(dirName)
 	assert.Equal(t, "", readVersion(dirName))
 
-	cache.AddImage(testdata.Testfile, 640, testdata.CompressQuality, testdata.ThumbnailFile)
-	assert.NotNil(t, cache.CachedImage(testdata.Testfile, 640, testdata.CompressQuality))
+	cache.AddImage(testdata.Testfile, 640, 480, testdata.CompressQuality, testdata.ThumbnailFile)
+	assert.NotNil(t, cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQuality))
 
 	cache.Migrate()
 
 	assert.Equal(t, constants.CacheVersion, readVersion(dirName))
-	assert.Nil(t, cache.CachedImage(testdata.Testfile, 640, testdata.CompressQuality))
+	assert.Nil(t, cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQuality))
 }
 
 // upgrade
@@ -88,13 +88,13 @@ func TestVersioning2(t *testing.T) {
 	writeVersion(dirName, "0")
 	assert.Equal(t, "0", readVersion(dirName))
 
-	cache.AddImage(testdata.Testfile, 640, testdata.CompressQuality, testdata.ThumbnailFile)
-	assert.NotNil(t, cache.CachedImage(testdata.Testfile, 640, testdata.CompressQuality))
+	cache.AddImage(testdata.Testfile, 640, 480, testdata.CompressQuality, testdata.ThumbnailFile)
+	assert.NotNil(t, cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQuality))
 
 	cache.Migrate()
 
 	assert.Equal(t, constants.CacheVersion, readVersion(dirName))
-	assert.Nil(t, cache.CachedImage(testdata.Testfile, 640, testdata.CompressQuality))
+	assert.Nil(t, cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQuality))
 }
 
 // same version
@@ -108,13 +108,13 @@ func TestVersioning3(t *testing.T) {
 	writeVersion(dirName, constants.CacheVersion)
 	assert.Equal(t, constants.CacheVersion, readVersion(dirName))
 
-	cache.AddImage(testdata.Testfile, 640, testdata.CompressQuality, testdata.ThumbnailFile)
-	assert.NotNil(t, cache.CachedImage(testdata.Testfile, 640, testdata.CompressQuality))
+	cache.AddImage(testdata.Testfile, 640, 480, testdata.CompressQuality, testdata.ThumbnailFile)
+	assert.NotNil(t, cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQuality))
 
 	cache.Migrate()
 
 	assert.Equal(t, constants.CacheVersion, readVersion(dirName))
-	assert.NotNil(t, cache.CachedImage(testdata.Testfile, 640, testdata.CompressQuality))
+	assert.NotNil(t, cache.CachedImage(testdata.Testfile, 640, 480, testdata.CompressQuality))
 }
 
 func readVersion(dirName string) string {

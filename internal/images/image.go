@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/jpeg"
 	_ "image/jpeg"
+	"math"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -39,13 +40,20 @@ func GetPhotoSize(path string) (*ImageSize, error) {
 }
 
 func AspectedHeight(size ImageSize, width int) int {
-	ratio := float32(size.Height) / float32(size.Width)
-	return int(float32(width) * ratio)
+	ratio := float64(size.Height) / float64(size.Width)
+	// align with imaing lib
+	return int(math.Floor(ratio*float64(width) + 0.5))
 }
 
-func ResizeImage(src string, to string, width int, compressQuality int) error {
-	log.Debug().Msgf("Resizing %s to %d", src, width)
-	data, err := ResizeData(src, width, compressQuality)
+func AspectedWidth(size ImageSize, height int) int {
+	ratio := float64(size.Width) / float64(size.Height)
+	// align with imaing lib
+	return int(math.Floor(float64(height)*ratio + 0.5))
+}
+
+func ResizeImage(src string, to string, width int, height int, compressQuality int) error {
+	log.Debug().Msgf("Resizing %s to %dx%d", src, width, height)
+	data, err := ResizeData(src, width, height, compressQuality)
 	if err != nil {
 		return err
 	}
@@ -56,13 +64,15 @@ func ResizeImage(src string, to string, width int, compressQuality int) error {
 	return nil
 }
 
-func ResizeData(path string, width int, compressQuality int) (*bytes.Buffer, error) {
+func ResizeData(path string, width int, height int, compressQuality int) (*bytes.Buffer, error) {
 	src, err := openImage(path)
 	if err != nil {
 		return nil, err
 	}
 
-	resized := imaging.Resize(src, width, 0, imaging.Lanczos)
+	// If either width or height is 0, preserve aspect ratio
+	// If both are specified, resize to exact dimensions
+	resized := imaging.Resize(src, width, height, imaging.Lanczos)
 	buf := new(bytes.Buffer)
 	opt := jpeg.Options{Quality: compressQuality}
 	if err := jpeg.Encode(buf, resized, &opt); err != nil {

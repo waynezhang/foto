@@ -95,7 +95,7 @@ func export(
 		spinnerMsg("copying folder %s to %s", src, dst)
 	})
 
-	spinner.UpdateMessagef(prefixSpinnerMsg + "succeeded")
+	spinner.UpdateMessage(prefixSpinnerMsg + "succeeded")
 
 	spinner.Complete()
 	sm.Stop()
