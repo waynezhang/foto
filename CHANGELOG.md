@@ -1,3 +1,10 @@
+## v1.6.1 (2025-03-10)
+
+### New feature
+
+- [#57](https://github.com/waynezhang/foto/issues/57) remove height setting in favor of min height setting. ([#60](https://github.com/waynezhang/foto/issues/60)) ([eb4f2c4](https://github.com/waynezhang/foto/commit/eb4f2c46e01e6281d6e731f20bc60996c9415af1))
+
+
 ## v1.6.0 (2025-03-10)
 
 ### New feature
