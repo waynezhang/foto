@@ -27,13 +27,13 @@ link = "https://twitter.com/xxx"
 [image]
 # Width for thumbnail images (set either width or height, or both)
 thumbnailWidth = 640
-# Height for thumbnail images
-# thumbnailHeight = 0
+# Minimum height for thumbnail images
+# minThumbnailHeight = 400
 
 # Width for enlarged images (set either width or height, or both)
 originalWidth = 2048
-# Height for enlarged images
-# originalHeight = 0
+# Minimum height for enlarged images
+# minOriginalHeight = 1200
 
 # Compress Quality (0~100), higher is better.
 compressQuality = 88
@@ -59,12 +59,13 @@ text = ""
 slug = "section-1"
 folder = "~/photos/section-1"
 ascending = false
+
 # You can override thumbnail and original dimensions for each section
 # If not specified, the global settings from [image] section will be used
 # thumbnailWidth = 800
-# thumbnailHeight = 600
+# minThumbnailHeight = 600
 # originalWidth = 2560
-# originalHeight = 1920
+# minOriginalHeight = 1920
 
 [[section]]
 title = "Section 2"
@@ -72,11 +73,12 @@ text = ""
 slug = "section-2"
 folder = "~/photos/section-2"
 ascending = false
+
 # Section-specific image dimension settings
 # thumbnailWidth = 320
-# thumbnailHeight = 240
+# minThumbnailHeight = 240
 # originalWidth = 1600
-# originalHeight = 1200
+# minOriginalHeight = 1200
 
 # Other setings
 [others]

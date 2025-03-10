@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/rs/zerolog/log"
@@ -84,32 +85,34 @@ func handleImage(path string, cfg config.Config, sections []indexer.Section, w h
 		return
 	}
 
-	var dir *string
+	slug := comps[0]
+	key := comps[1]
+	file := comps[2]
+
+	var file_path string
+	var size images.ImageSize
 	for _, s := range sections {
-		if s.Slug == comps[0] {
-			dir = &s.Folder
-			break
+		if s.Slug == slug {
+			for _, is := range s.ImageSets {
+				if is.FileName == file {
+					file_path = filepath.Join(s.Folder, file)
+					if key == "thumbnail" {
+						size = is.ThumbnailSize
+					} else if key == "original" {
+						size = is.OriginalSize
+					}
+					break
+				}
+			}
 		}
 	}
 
-	if dir == nil {
+	if file_path == "" || size.Width == 0 || size.Height == 0 {
 		http.NotFound(w, r)
 		return
 	}
 
-	key := comps[1]
-	var width, height int
-	if key == "thumbnail" {
-		width = cfg.GetExtractOption().ThumbnailWidth
-		height = cfg.GetExtractOption().ThumbnailHeight
-	} else if key == "original" {
-		width = cfg.GetExtractOption().OriginalWidth
-		height = cfg.GetExtractOption().OriginalHeight
-	} else {
-		http.NotFound(w, r)
-		return
-	}
-	data, err := images.ResizeData(*dir+"/"+comps[2], int(width), int(height), cfg.GetExtractOption().CompressQuality)
+	data, err := images.ResizeData(file_path, size.Width, size.Height, cfg.GetExtractOption().CompressQuality)
 	if err != nil {
 		http.NotFound(w, r)
 		return

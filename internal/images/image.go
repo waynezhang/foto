@@ -39,16 +39,15 @@ func GetPhotoSize(path string) (*ImageSize, error) {
 	}, nil
 }
 
-func AspectedHeight(size ImageSize, width int) int {
+func AspectedSize(size ImageSize, width int, minHeight int) ImageSize {
 	ratio := float64(size.Height) / float64(size.Width)
-	// align with imaing lib
-	return int(math.Floor(ratio*float64(width) + 0.5))
-}
+	height := int(math.Round(float64(width) * ratio))
+	if minHeight > height {
+		height = minHeight
+		width = int(math.Round(float64(height) / ratio))
+	}
 
-func AspectedWidth(size ImageSize, height int) int {
-	ratio := float64(size.Width) / float64(size.Height)
-	// align with imaing lib
-	return int(math.Floor(float64(height)*ratio + 0.5))
+	return ImageSize{width, height}
 }
 
 func ResizeImage(src string, to string, width int, height int, compressQuality int) error {

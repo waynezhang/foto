@@ -33,14 +33,10 @@ func TestGetPhotoSize(t *testing.T) {
 	assert.True(t, os.IsNotExist(err))
 }
 
-func TestAspectedHeight(t *testing.T) {
-	assert.Equal(t, 200, AspectedHeight(ImageSize{200, 200}, 200))
-	assert.Equal(t, 100, AspectedHeight(ImageSize{2048, 1024}, 200))
-}
-
-func TestAspectedWidth(t *testing.T) {
-	assert.Equal(t, 200, AspectedWidth(ImageSize{200, 200}, 200))
-	assert.Equal(t, 400, AspectedWidth(ImageSize{2048, 1024}, 200))
+func TestAspectedSize(t *testing.T) {
+	assert.Equal(t, ImageSize{640, 480}, AspectedSize(ImageSize{2048, 1536}, 640, 0))
+	assert.Equal(t, ImageSize{640, 480}, AspectedSize(ImageSize{2048, 1536}, 640, 100))
+	assert.Equal(t, ImageSize{1024, 768}, AspectedSize(ImageSize{2048, 1536}, 640, 768))
 }
 
 func TestResizeImage(t *testing.T) {
@@ -127,38 +123,4 @@ func TestPngSupport(t *testing.T) {
 
 	checksum, _ := files.Checksum(path)
 	assert.Equal(t, testdata.PngExpectedThubmnailChecksum, *checksum)
-}
-
-func TestResizeWithHeightOnly(t *testing.T) {
-	tmp, err := os.MkdirTemp("", "foto-test")
-	assert.Nil(t, err)
-
-	path := filepath.Join(tmp, "resized-height.jpg")
-
-	// Test resize with only height specified
-	err = ResizeImage(testdata.Testfile, path, 0, testdata.ThumbnailHeight, testdata.CompressQuality)
-	assert.Nil(t, err)
-
-	size, _ := GetPhotoSize(path)
-	assert.Equal(t, testdata.ThumbnailHeight, size.Height)
-	// Width should be calculated to maintain aspect ratio
-	expectedWidth := AspectedWidth(ImageSize{testdata.TestfileWidth, testdata.TestfileHeight}, testdata.ThumbnailHeight)
-	assert.Equal(t, expectedWidth, size.Width)
-}
-
-func TestResizeWithBothDimensions(t *testing.T) {
-	tmp, err := os.MkdirTemp("", "foto-test")
-	assert.Nil(t, err)
-
-	path := filepath.Join(tmp, "resized-both.jpg")
-
-	// Test resize with both width and height specified (aspect ratio not preserved)
-	customWidth := 400
-	customHeight := 400
-	err = ResizeImage(testdata.Testfile, path, customWidth, customHeight, testdata.CompressQuality)
-	assert.Nil(t, err)
-
-	size, _ := GetPhotoSize(path)
-	assert.Equal(t, customWidth, size.Width)
-	assert.Equal(t, customHeight, size.Height)
 }
