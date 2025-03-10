@@ -62,10 +62,10 @@ func TestBuildSizeOverride(t *testing.T) {
 	assert.Equal(t, 2048, sections[0].ImageSets[0].OriginalSize.Width)
 	assert.Equal(t, 1536, sections[0].ImageSets[0].OriginalSize.Height)
 
-	assert.Equal(t, 151, sections[1].ImageSets[0].ThumbnailSize.Width)
-	assert.Equal(t, 100, sections[1].ImageSets[0].ThumbnailSize.Height)
-	assert.Equal(t, 605, sections[1].ImageSets[0].OriginalSize.Width)
-	assert.Equal(t, 400, sections[1].ImageSets[0].OriginalSize.Height)
+	assert.Equal(t, 1162, sections[1].ImageSets[0].ThumbnailSize.Width)
+	assert.Equal(t, 768, sections[1].ImageSets[0].ThumbnailSize.Height)
+	assert.Equal(t, 2324, sections[1].ImageSets[0].OriginalSize.Width)
+	assert.Equal(t, 1536, sections[1].ImageSets[0].OriginalSize.Height)
 }
 
 func TestBuildDuplicatedSlugs(t *testing.T) {
@@ -155,115 +155,67 @@ func TestSectionExtractOption(t *testing.T) {
 			},
 			sectionMeta: config.SectionMetadata{},
 			expectedOption: config.ExtractOption{
-				ThumbnailWidth:  640,
-				ThumbnailHeight: 0,
-				OriginalWidth:   2048,
-				OriginalHeight:  0,
+				ThumbnailWidth:     640,
+				MinThumbnailHeight: 0,
+				OriginalWidth:      2048,
+				MinOriginalHeight:  0,
 			},
 		},
 		{
-			name: "section override thumbnail",
+			name: "section override size",
 			global: config.ExtractOption{
 				ThumbnailWidth: 640,
 				OriginalWidth:  2048,
 			},
 			sectionMeta: config.SectionMetadata{
-				ThumbnailWidth:  800,
-				ThumbnailHeight: 0,
-				OriginalWidth:   2048,
-				OriginalHeight:  0,
-			},
-			expectedOption: config.ExtractOption{
 				ThumbnailWidth: 800,
-				OriginalWidth:  2048,
+				OriginalWidth:  3000,
+			},
+			expectedOption: config.ExtractOption{
+				ThumbnailWidth:     800,
+				MinThumbnailHeight: 0,
+				OriginalWidth:      3000,
+				MinOriginalHeight:  0,
 			},
 		},
 		{
-			name: "section override thumbnail height",
+			name: "section override original min",
 			global: config.ExtractOption{
-				ThumbnailWidth: 640,
-				OriginalWidth:  2048,
+				ThumbnailWidth:     640,
+				MinThumbnailHeight: 0,
+				OriginalWidth:      2048,
+				MinOriginalHeight:  1024,
 			},
 			sectionMeta: config.SectionMetadata{
-				ThumbnailHeight: 600,
+				MinThumbnailHeight: 480,
+				MinOriginalHeight:  1366,
 			},
 			expectedOption: config.ExtractOption{
-				ThumbnailWidth:  0,
-				ThumbnailHeight: 600,
-				OriginalWidth:   2048,
-				OriginalHeight:  0,
-			},
-		},
-		{
-			name: "section override original",
-			global: config.ExtractOption{
-				ThumbnailWidth: 640,
-				OriginalWidth:  2048,
-			},
-			sectionMeta: config.SectionMetadata{
-				OriginalWidth: 1920,
-			},
-			expectedOption: config.ExtractOption{
-				ThumbnailWidth:  640,
-				ThumbnailHeight: 0,
-				OriginalWidth:   1920,
-				OriginalHeight:  0,
-			},
-		},
-		{
-			name: "section override original height",
-			global: config.ExtractOption{
-				ThumbnailWidth: 640,
-				OriginalHeight: 1536,
-			},
-			sectionMeta: config.SectionMetadata{
-				OriginalHeight: 1080,
-			},
-			expectedOption: config.ExtractOption{
-				ThumbnailWidth:  640,
-				ThumbnailHeight: 0,
-				OriginalWidth:   0,
-				OriginalHeight:  1080,
-			},
-		},
-		{
-			name: "section override all dimensions",
-			global: config.ExtractOption{
-				ThumbnailWidth: 640,
-				OriginalWidth:  2048,
-			},
-			sectionMeta: config.SectionMetadata{
-				ThumbnailWidth:  800,
-				ThumbnailHeight: 600,
-				OriginalWidth:   1920,
-				OriginalHeight:  1080,
-			},
-			expectedOption: config.ExtractOption{
-				ThumbnailWidth:  800,
-				ThumbnailHeight: 600,
-				OriginalWidth:   1920,
-				OriginalHeight:  1080,
+				ThumbnailWidth:     640,
+				MinThumbnailHeight: 480,
+				OriginalWidth:      2048,
+				MinOriginalHeight:  1366,
 			},
 		},
 		{
 			name: "zero values for section should be ignored",
 			global: config.ExtractOption{
-				ThumbnailWidth:  640,
-				ThumbnailHeight: 480,
-				OriginalWidth:   2048,
-				OriginalHeight:  1536,
+				ThumbnailWidth:     640,
+				MinThumbnailHeight: 480,
+				OriginalWidth:      2048,
+				MinOriginalHeight:  1536,
 			},
 			sectionMeta: config.SectionMetadata{
-				ThumbnailWidth:  0,
-				ThumbnailHeight: 0,
-				OriginalWidth:   0,
-				OriginalHeight:  0,
+				ThumbnailWidth:     0,
+				MinThumbnailHeight: 0,
+				OriginalWidth:      0,
+				MinOriginalHeight:  0,
 			},
 			expectedOption: config.ExtractOption{
-				ThumbnailWidth:  640,
-				ThumbnailHeight: 480,
-				OriginalWidth:   2048,
-				OriginalHeight:  1536,
+				ThumbnailWidth:     640,
+				MinThumbnailHeight: 480,
+				OriginalWidth:      2048,
+				MinOriginalHeight:  1536,
 			},
 		},
 	}
@@ -273,10 +225,9 @@ func TestSectionExtractOption(t *testing.T) {
 			result := sectionExtractOption(tc.global, tc.sectionMeta)
 
 			assert.Equal(t, tc.expectedOption.ThumbnailWidth, result.ThumbnailWidth, "ThumbnailWidth should match expected value")
-			assert.Equal(t, tc.expectedOption.ThumbnailHeight, result.ThumbnailHeight, "ThumbnailHeight should match expected value")
+			assert.Equal(t, tc.expectedOption.MinOriginalHeight, result.MinOriginalHeight, "ThumbnailHeight should match expected value")
 			assert.Equal(t, tc.expectedOption.OriginalWidth, result.OriginalWidth, "OriginalWidth should match expected value")
-			assert.Equal(t, tc.expectedOption.OriginalHeight, result.OriginalHeight, "OriginalHeight should match expected value")
-			assert.Equal(t, tc.expectedOption.CompressQuality, result.CompressQuality, "CompressQuality should match expected value")
+			assert.Equal(t, tc.expectedOption.MinOriginalHeight, result.MinOriginalHeight, "OriginalHeight should match expected value")
 		})
 	}
 }

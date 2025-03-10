@@ -1,7 +1,6 @@
 package indexer
 
 import (
-	"errors"
 	"fmt"
 	"html/template"
 	"os"
@@ -24,12 +23,10 @@ type Section struct {
 	ImageSets []ImageSet
 }
 
-type ImageSize images.ImageSize
-
 type ImageSet struct {
 	FileName        string
-	ThumbnailSize   ImageSize
-	OriginalSize    ImageSize
+	ThumbnailSize   images.ImageSize
+	OriginalSize    images.ImageSize
 	CompressQuality int
 }
 
@@ -118,43 +115,13 @@ func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) 
 		return nil, err
 	}
 
-	thumbnailWidth := option.ThumbnailWidth
-	thumbnailHeight := option.ThumbnailHeight
-
-	// If both width and height are specified, use them as is
-	// If only one is specified, calculate the other to maintain aspect ratio
-	if thumbnailWidth > 0 && thumbnailHeight == 0 {
-		thumbnailHeight = images.AspectedHeight(*imageSize, thumbnailWidth)
-	} else if thumbnailWidth == 0 && thumbnailHeight > 0 {
-		thumbnailWidth = images.AspectedWidth(*imageSize, thumbnailHeight)
-	} else if thumbnailWidth == 0 && thumbnailHeight == 0 {
-		return nil, errors.New("Either thumbnailWidth or thumbnailHeight should be set")
-	}
-
-	// Handle original size
-	originalWidth := option.OriginalWidth
-	originalHeight := option.OriginalHeight
-
-	// If both width and height are specified, use them as is
-	// If only one is specified, calculate the other to maintain aspect ratio
-	if originalWidth > 0 && originalHeight == 0 {
-		originalHeight = images.AspectedHeight(*imageSize, originalWidth)
-	} else if originalWidth == 0 && originalHeight > 0 {
-		originalWidth = images.AspectedWidth(*imageSize, originalHeight)
-	} else if originalWidth == 0 && originalHeight == 0 {
-		return nil, errors.New("Either originalWidth or originalHeight should be set")
-	}
+	thumbnailSize := images.AspectedSize(*imageSize, option.ThumbnailWidth, option.MinThumbnailHeight)
+	originalSize := images.AspectedSize(*imageSize, option.OriginalWidth, option.MinOriginalHeight)
 
 	return &ImageSet{
-		FileName: filepath.Base(path),
-		ThumbnailSize: ImageSize{
-			thumbnailWidth,
-			thumbnailHeight,
-		},
-		OriginalSize: ImageSize{
-			originalWidth,
-			originalHeight,
-		},
+		FileName:        filepath.Base(path),
+		ThumbnailSize:   thumbnailSize,
+		OriginalSize:    originalSize,
 		CompressQuality: option.CompressQuality,
 	}, nil
 }
@@ -166,13 +133,17 @@ func validSlug(slug string) bool {
 
 func sectionExtractOption(global config.ExtractOption, metadata config.SectionMetadata) config.ExtractOption {
 	sectionOption := global
-	if metadata.ThumbnailWidth > 0 || metadata.ThumbnailHeight > 0 {
+	if metadata.ThumbnailWidth > 0 {
 		sectionOption.ThumbnailWidth = metadata.ThumbnailWidth
-		sectionOption.ThumbnailHeight = metadata.ThumbnailHeight
 	}
-	if metadata.OriginalWidth > 0 || metadata.OriginalHeight > 0 {
+	if metadata.MinThumbnailHeight > 0 {
+		sectionOption.MinThumbnailHeight = metadata.MinThumbnailHeight
+	}
+	if metadata.OriginalWidth > 0 {
 		sectionOption.OriginalWidth = metadata.OriginalWidth
-		sectionOption.OriginalHeight = metadata.OriginalHeight
+	}
+	if metadata.MinOriginalHeight > 0 {
+		sectionOption.MinOriginalHeight = metadata.MinOriginalHeight
 	}
 
 	return sectionOption
