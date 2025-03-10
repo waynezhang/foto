@@ -67,10 +67,10 @@ func preview(cmd *cobra.Command, args []string) {
 	utils.CheckFatalError(err, "Failed to listen the port")
 }
 
-func handleRoot(cfg config.Config, sections []indexer.Section, w http.ResponseWriter, r *http.Request) {
+func handleRoot(cfg config.Config, sections []indexer.Section, w http.ResponseWriter, _ *http.Request) {
 	tmpl := template.Must(template.ParseFiles(constants.TemplateFilePath))
 	_ = tmpl.Execute(w, struct {
-		Config   map[string]interface{}
+		Config   map[string]any
 		Sections []indexer.Section
 	}{
 		cfg.AllSettings(),

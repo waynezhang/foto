@@ -9,7 +9,7 @@ type Config interface {
 	GetSectionMetadata() []SectionMetadata
 	GetExtractOption() ExtractOption
 	GetOtherFolders() []string
-	AllSettings() map[string]interface{}
+	AllSettings() map[string]any
 }
 
 type ExtractOption struct {

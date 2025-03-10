@@ -82,7 +82,7 @@ func (ctx defaultExportContext) generateIndexHtml(cfg config.Config, templatePat
 
 	tmpl := template.Must(template.ParseFiles(templatePath))
 	err = tmpl.Execute(f, struct {
-		Config   map[string]interface{}
+		Config   map[string]any
 		Sections []indexer.Section
 	}{
 		cfg.AllSettings(),

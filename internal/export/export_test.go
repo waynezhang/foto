@@ -60,8 +60,8 @@ func (m *MockConfig) GetOtherFolders() []string {
 func (m *MockConfig) GetExtractOption() config.ExtractOption {
 	return m.Called().Get(0).(config.ExtractOption)
 }
-func (m *MockConfig) AllSettings() map[string]interface{} {
-	return m.Called().Get(0).(map[string]interface{})
+func (m *MockConfig) AllSettings() map[string]any {
+	return m.Called().Get(0).(map[string]any)
 }
 
 // MockContext
@@ -212,7 +212,7 @@ func TestGenerateIndexHTML(t *testing.T) {
 	path := filepath.Join(tmp, "index.html")
 
 	cfg := MockConfig{}
-	cfg.On("AllSettings").Return(map[string]interface{}{})
+	cfg.On("AllSettings").Return(map[string]any{})
 
 	mockMinimizer := new(MockMinimizer)
 	mockMinimizer.On("MinimizeFile", mock.Anything, mock.Anything).Return(nil)

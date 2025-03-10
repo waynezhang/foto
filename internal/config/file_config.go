@@ -51,6 +51,6 @@ func (cfg fileConfig) GetOtherFolders() []string {
 	return cfg.otherFolders
 }
 
-func (cfg fileConfig) AllSettings() map[string]interface{} {
+func (cfg fileConfig) AllSettings() map[string]any {
 	return cfg.v.AllSettings()
 }

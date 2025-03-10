@@ -65,7 +65,7 @@ func export(
 	spinner := sm.AddSpinner(prefixSpinnerMsg)
 	sm.Start()
 
-	spinnerMsg := func(format string, a ...interface{}) {
+	spinnerMsg := func(format string, a ...any) {
 		spinner.UpdateMessagef(prefixSpinnerMsg+format, a...)
 	}
 
