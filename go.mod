@@ -1,7 +1,6 @@
 module github.com/waynezhang/foto
 
 go 1.24.1
-
 require (
 	github.com/chelnak/ysmrr v0.6.0
 	github.com/disintegration/imaging v1.6.2
@@ -9,7 +8,7 @@ require (
 	github.com/otiai10/copy v1.14.1
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/cobra v1.9.1
-	github.com/spf13/viper v1.20.0
+	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	github.com/tdewolff/minify/v2 v2.22.3
 	golang.org/x/image v0.25.0
