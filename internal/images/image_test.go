@@ -124,3 +124,27 @@ func TestPngSupport(t *testing.T) {
 	checksum, _ := files.Checksum(path)
 	assert.Equal(t, testdata.PngExpectedThubmnailChecksum, *checksum)
 }
+
+func TestGetImageDescription(t *testing.T) {
+	description, err := GetPhotoDescription(testdata.MetadataTestFile)
+	assert.Nil(t, err)
+	assert.Equal(t, testdata.ExpectedDescription, *description)
+}
+
+func TestGetEmptyImageDescription(t *testing.T) {
+	description, err := GetPhotoDescription(testdata.RotatedImageFile)
+	assert.Nil(t, err)
+	assert.Nil(t, description)
+}
+
+func TestGetPngImageDescription(t *testing.T) {
+	description, err := GetPhotoDescription(testdata.PngMetadataTestFile)
+	assert.Nil(t, err)
+	assert.Equal(t, testdata.PngExpectedDescription, *description)
+}
+
+func TestGetEmptyPngImageDescription(t *testing.T) {
+	description, err := GetPhotoDescription(testdata.PngTestFile)
+	assert.Nil(t, err)
+	assert.Nil(t, description)
+}

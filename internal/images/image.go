@@ -2,14 +2,17 @@ package images
 
 import (
 	"bytes"
+	"fmt"
 	"image"
 	"image/jpeg"
 	_ "image/jpeg"
 	"math"
+	"os"
 	"path/filepath"
 	"slices"
 	"strings"
 
+	"github.com/bep/imagemeta"
 	"github.com/disintegration/imaging"
 	"github.com/rs/zerolog/log"
 	"github.com/waynezhang/foto/internal/files"
@@ -83,4 +86,55 @@ func ResizeData(path string, width int, height int, compressQuality int) (*bytes
 
 func openImage(path string) (image.Image, error) {
 	return imaging.Open(path, imaging.AutoOrientation(true))
+}
+
+func GetPhotoDescription(path string) (*string, error) {
+	img, err := os.Open(path)
+
+	if err != nil {
+		return nil, err
+	}
+	defer img.Close()
+
+	var tags imagemeta.Tags
+	handleTag := func(ti imagemeta.TagInfo) error {
+		if ti.Tag == "ImageDescription" {
+			tags.Add(ti)
+			return imagemeta.ErrStopWalking
+		}
+		return nil
+	}
+
+	imageFormat := extToFormat(filepath.Ext(path))
+
+	err = imagemeta.Decode(
+		imagemeta.Options{
+			R:           img,
+			ImageFormat: imageFormat,
+			HandleTag:   handleTag,
+			Sources:     imagemeta.EXIF,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	s, ok := tags.EXIF()["ImageDescription"].Value.(string)
+	if !ok {
+		return nil, nil
+	}
+	return &s, nil
+}
+
+func extToFormat(ext string) imagemeta.ImageFormat {
+	switch ext {
+	case ".jpg", ".jpeg":
+		return imagemeta.JPEG
+	case ".webp":
+		return imagemeta.WebP
+	case ".png":
+		return imagemeta.PNG
+	default:
+		panic(fmt.Errorf("unsupported image format: %s", ext))
+	}
 }
