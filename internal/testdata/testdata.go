@@ -142,3 +142,11 @@ var (
 	PngThumbnailHeight           = 480
 	PngExpectedThubmnailChecksum = "c52322af93c85de909aa5774f58ab2b26ad13f95e405f4ce42703468f3490ab3"
 )
+
+var (
+	MetadataTestFile    = "../../testdata/description.jpg"
+	ExpectedDescription = "A brand new description"
+
+	PngMetadataTestFile    = "../../testdata/png/description.png"
+	PngExpectedDescription = "A png new description"
+)

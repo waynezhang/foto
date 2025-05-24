@@ -33,6 +33,8 @@ show_zoom    = true
 show_close   = true
 # Show Image Count
 show_counter = true
+# Show Image alt text as caption
+show_caption = false
 
 # Setttings for photo size
 [image]
@@ -48,6 +50,9 @@ originalWidth = 2048
 
 # Compress Quality (0~100), higher is better.
 compressQuality = 75
+
+# Extract image alt text from EXIF ImageDescription tag
+extractAltText = false
 
 # Layout for grids
 [layout]

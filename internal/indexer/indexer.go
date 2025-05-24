@@ -28,6 +28,7 @@ type ImageSet struct {
 	ThumbnailSize   images.ImageSize
 	OriginalSize    images.ImageSize
 	CompressQuality int
+	AltText         *string
 }
 
 func Build(metadata []config.SectionMetadata, option config.ExtractOption) ([]Section, error) {
@@ -117,12 +118,20 @@ func buildImageSet(path string, option config.ExtractOption) (*ImageSet, error) 
 
 	thumbnailSize := images.AspectedSize(*imageSize, option.ThumbnailWidth, option.MinThumbnailHeight)
 	originalSize := images.AspectedSize(*imageSize, option.OriginalWidth, option.MinOriginalHeight)
+	var description *string = nil
+	if option.ExtractAltText {
+		description, err = images.GetPhotoDescription(path)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return &ImageSet{
 		FileName:        filepath.Base(path),
 		ThumbnailSize:   thumbnailSize,
 		OriginalSize:    originalSize,
 		CompressQuality: option.CompressQuality,
+		AltText:         description,
 	}, nil
 }
 

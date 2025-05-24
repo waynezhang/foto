@@ -29,6 +29,7 @@ func TestFileConfig(t *testing.T) {
 
 	// Test PhotoSwipe version
 	assert.NotNil(t, cfg.AllSettings()["photoswipeversion"])
+	assert.NotNil(t, cfg.AllSettings()["photoswipecaptionpluginversion"])
 }
 
 func TestFileConfigV1(t *testing.T) {

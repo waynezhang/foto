@@ -23,6 +23,7 @@ func NewFileConfig(file string) Config {
 
 	// Inject PhotoSwipeVersion
 	v.Set("PhotoSwipeVersion", constants.PhotoSwipeVersion)
+	v.Set("PhotoSwipeCaptionPluginVersion", constants.PhotoSwipeCaptionPluginVersion)
 
 	config := fileConfig{v: v}
 
