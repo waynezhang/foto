@@ -33,6 +33,8 @@ show_zoom    = true
 show_close   = true
 # Show Image Count
 show_counter = true
+# Show Image alt text as caption
+show_caption = false
 
 # Setttings for photo size
 [image]

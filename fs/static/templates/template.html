@@ -15,6 +15,9 @@
     <meta property="og:description" content="{{ .Config.site.description }}">
     {{- end }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.photoswipeversion }}/photoswipe.css">
+    {{ if .Config.lightbox.show_caption }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe-dynamic-caption-plugin//{{ .Config.photoswipecaptionpluginversion }}/photoswipe-dynamic-caption-plugin.min.css">
+    {{ end }}
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
     <link rel="stylesheet" href="assets/style.css">
   </head>
@@ -51,7 +54,11 @@
                 data-pswp-width="{{ .OriginalSize.Width }}" 
                 data-pswp-height="{{ .OriginalSize.Height }}" 
                 target="_blank">
-                <img class="lozad" data-src="photos/{{ $section.Slug }}/thumbnail/{{ .FileName }}" />
+                <img
+                  class="lozad"
+                  data-src="photos/{{ $section.Slug }}/thumbnail/{{ .FileName }}"
+                  alt="{{ .EXIF.ImageDescription }}"
+                />
               </a>
               </div>
               {{- end }}
@@ -82,6 +89,9 @@
 
       import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.photoswipeversion }}/photoswipe-lightbox.esm.min.js';
       import PhotoSwipe from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/{{ .Config.photoswipeversion }}/photoswipe.esm.min.js';
+      {{if .Config.lightbox.show_caption }}
+      import PhotoSwipeDynamicCaption from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe-dynamic-caption-plugin/{{ .Config.photoswipecaptionpluginversion }}/photoswipe-dynamic-caption-plugin.esm.min.js'
+      {{end}}
 
       const lightboxOptions = {
         pswpModule: PhotoSwipe,
@@ -96,6 +106,9 @@
         lightboxOptions.counter = {{ .Config.lightbox.show_counter }};
       {{end}}
       const lightbox = new PhotoSwipeLightbox(lightboxOptions);
+      {{if .Config.lightbox.show_caption }}
+      const captionPlugin = new PhotoSwipeDynamicCaption(lightbox, { type: 'auto' });
+      {{end}}
       lightbox.init();
     </script>
   </body>

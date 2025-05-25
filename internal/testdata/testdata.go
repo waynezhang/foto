@@ -142,3 +142,16 @@ var (
 	PngThumbnailHeight           = 480
 	PngExpectedThubmnailChecksum = "c52322af93c85de909aa5774f58ab2b26ad13f95e405f4ce42703468f3490ab3"
 )
+
+var (
+	MetadataTestFile         = "../../testdata/exif/test.jpg"
+	ExpectedImageDescription = "A brand new description"
+	ExpectedMake             = "FUJIFILM"
+	ExpectedModel            = "GFX 50R"
+	ExpectedExposureTime     = "1/340"
+	ExpectedISO              = "100"
+	ExpectedApertureValue    = "8"
+
+	PngMetadataTestFile         = "../../testdata/exif/test.png"
+	PngExpectedImageDescription = "A png new description"
+)
