@@ -18,7 +18,6 @@ type ExtractOption struct {
 	OriginalWidth      int
 	MinOriginalHeight  int
 	CompressQuality    int
-	ExtractAltText     bool
 }
 
 type SectionMetadata struct {

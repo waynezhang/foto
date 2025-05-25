@@ -125,26 +125,32 @@ func TestPngSupport(t *testing.T) {
 	assert.Equal(t, testdata.PngExpectedThubmnailChecksum, *checksum)
 }
 
-func TestGetImageDescription(t *testing.T) {
-	description, err := GetPhotoDescription(testdata.MetadataTestFile)
+func TestGetImageEXIF(t *testing.T) {
+	exif, err := GetEXIFValues(testdata.MetadataTestFile)
 	assert.Nil(t, err)
-	assert.Equal(t, testdata.ExpectedDescription, *description)
+
+	assert.Equal(t, testdata.ExpectedImageDescription, exif["ImageDescription"])
+	assert.Equal(t, testdata.ExpectedMake, exif["Make"])
+	assert.Equal(t, testdata.ExpectedModel, exif["Model"])
+	assert.Equal(t, testdata.ExpectedExposureTime, exif["ExposureTime"])
+	assert.Equal(t, testdata.ExpectedISO, exif["ISO"])
+	assert.Equal(t, testdata.ExpectedApertureValue, exif["ApertureValue"])
 }
 
 func TestGetEmptyImageDescription(t *testing.T) {
-	description, err := GetPhotoDescription(testdata.RotatedImageFile)
+	exif, err := GetEXIFValues(testdata.RotatedImageFile)
 	assert.Nil(t, err)
-	assert.Nil(t, description)
+	assert.Equal(t, "", exif["ImageDescription"])
 }
 
 func TestGetPngImageDescription(t *testing.T) {
-	description, err := GetPhotoDescription(testdata.PngMetadataTestFile)
+	exif, err := GetEXIFValues(testdata.PngMetadataTestFile)
 	assert.Nil(t, err)
-	assert.Equal(t, testdata.PngExpectedDescription, *description)
+	assert.Equal(t, testdata.PngExpectedImageDescription, exif["ImageDescription"])
 }
 
 func TestGetEmptyPngImageDescription(t *testing.T) {
-	description, err := GetPhotoDescription(testdata.PngTestFile)
+	exif, err := GetEXIFValues(testdata.PngTestFile)
 	assert.Nil(t, err)
-	assert.Nil(t, description)
+	assert.Equal(t, "", exif["ImageDescription"])
 }

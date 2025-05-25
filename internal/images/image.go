@@ -88,7 +88,7 @@ func openImage(path string) (image.Image, error) {
 	return imaging.Open(path, imaging.AutoOrientation(true))
 }
 
-func GetPhotoDescription(path string) (*string, error) {
+func GetEXIFValues(path string) (map[string]string, error) {
 	img, err := os.Open(path)
 
 	if err != nil {
@@ -96,12 +96,9 @@ func GetPhotoDescription(path string) (*string, error) {
 	}
 	defer img.Close()
 
-	var tags imagemeta.Tags
+	tags := map[string]string{}
 	handleTag := func(ti imagemeta.TagInfo) error {
-		if ti.Tag == "ImageDescription" {
-			tags.Add(ti)
-			return imagemeta.ErrStopWalking
-		}
+		tags[ti.Tag] = fmt.Sprintf("%v", ti.Value)
 		return nil
 	}
 
@@ -119,11 +116,7 @@ func GetPhotoDescription(path string) (*string, error) {
 		return nil, err
 	}
 
-	s, ok := tags.EXIF()["ImageDescription"].Value.(string)
-	if !ok {
-		return nil, nil
-	}
-	return &s, nil
+	return tags, nil
 }
 
 func extToFormat(ext string) imagemeta.ImageFormat {

@@ -144,9 +144,14 @@ var (
 )
 
 var (
-	MetadataTestFile    = "../../testdata/description.jpg"
-	ExpectedDescription = "A brand new description"
+	MetadataTestFile         = "../../testdata/exif/test.jpg"
+	ExpectedImageDescription = "A brand new description"
+	ExpectedMake             = "FUJIFILM"
+	ExpectedModel            = "GFX 50R"
+	ExpectedExposureTime     = "1/340"
+	ExpectedISO              = "100"
+	ExpectedApertureValue    = "8"
 
-	PngMetadataTestFile    = "../../testdata/png/description.png"
-	PngExpectedDescription = "A png new description"
+	PngMetadataTestFile         = "../../testdata/exif/test.png"
+	PngExpectedImageDescription = "A png new description"
 )

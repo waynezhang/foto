@@ -57,9 +57,7 @@
                 <img
                   class="lozad"
                   data-src="photos/{{ $section.Slug }}/thumbnail/{{ .FileName }}"
-                  {{ if .AltText }}
-                  alt="{{ .AltText }}"
-                  {{ end }}
+                  alt="{{ .EXIF.ImageDescription }}"
                 />
               </a>
               </div>

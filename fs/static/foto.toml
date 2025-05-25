@@ -51,9 +51,6 @@ originalWidth = 2048
 # Compress Quality (0~100), higher is better.
 compressQuality = 75
 
-# Extract image alt text from EXIF ImageDescription tag
-extractAltText = false
-
 # Layout for grids
 [layout]
 minColumn = 1
