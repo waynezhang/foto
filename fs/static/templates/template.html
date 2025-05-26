@@ -54,10 +54,17 @@
                 data-pswp-width="{{ .OriginalSize.Width }}" 
                 data-pswp-height="{{ .OriginalSize.Height }}" 
                 target="_blank">
+                <!-- Check https://exiftool.org/TagNames/EXIF.html for all EXIF tags -->
                 <img
                   class="lozad"
                   data-src="photos/{{ $section.Slug }}/thumbnail/{{ .FileName }}"
-                  alt="{{ .EXIF.ImageDescription }}"
+                  alt="
+                  {{ with .EXIF }}
+                    {{ with .ImageDescription }} {{ . }} <br> {{ end }}
+                    {{ with .Make }} {{ . }} {{ end }}
+                    {{ with .Model }} {{ . }} {{ end }}
+                  {{ end }}
+                  "
                 />
               </a>
               </div>
