@@ -1,3 +1,10 @@
+## v1.7.0 (2025-05-26)
+
+### New feature
+
+- [#74](https://github.com/waynezhang/foto/pull/74) Support EXIF and add option to show caption
+
+
 ## v1.6.1 (2025-03-10)
 
 ### New feature
