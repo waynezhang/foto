@@ -10,11 +10,11 @@ Demo site: [https://foto.lhzhang.com](https://foto.lhzhang.com)
 
 ## Features
 
-- `Simple` One binary, three commands. No database.
-- `Customizable` Highly customizable by configuration and template files.
-- `Fast` Files are handled concurrently.
+- `Simple` One binary, three commands. No database required.
+- `Customizable` Highly customizable through configuration and template files.
+- `Fast` Files are processed concurrently for optimal performance.
 
-## Install
+## Installation
 
 ### macOS
 
@@ -27,10 +27,10 @@ Or download the binary from [here](https://github.com/waynezhang/foto/releases)
 
 ### Nix/NixOS
 
-for Nix users, a Flake is provided. It can be used to run the application
+For Nix users, a Flake is provided. It can be used to run the application
 directly or add the package to your configuration as flake input.
 
-It also allows to try out foto, without permanent installation.
+It also allows you to try out foto without permanent installation.
 
 ```sh
 nix run github:waynezhang/foto
@@ -88,29 +88,29 @@ Exprorting sites to /Users/xxx/site_docs...
 foto clear-cache
 ```
 
-## Customize
+## Customization
 
-### Basic customize `foto.toml`
+### Basic configuration with `foto.toml`
 
 See [foto.toml](./fs/static/foto.toml)
 
-### Style customize
+### Style customization
 
-Template and CSS styles can be modified without chagning `foto` binary.
+Template and CSS styles can be modified without changing the `foto` binary.
 
-The template file is placed in `templates/template.html`.
+The template file is located at `templates/template.html`.
 
-It's also possible to add additional settings in `foto.toml` ([ref](https://toml.io/en)) and refer it in template file.
-`foto` uses `html/template` package in Golang. Please refer to [this link](https://pkg.go.dev/html/template) for more information.
+You can also add additional settings in `foto.toml` ([ref](https://toml.io/en)) and reference them in the template file.
+`foto` uses the `html/template` package from Go. Please refer to [this link](https://pkg.go.dev/html/template) for more information. Besides, EXIF information is supported. Refer to [EXIF](https://exiftool.org/TagNames/EXIF.html) for all EXIF tags.
 
-# Changelogs
+## Changelogs
 
 See [CHANGELOG](./CHANGELOG.md)
 
-# LICENSE
+## LICENSE
  
 See [LICENSE](./LICENSE)
 
-# Credit
+## Credit
 
-`foto` is highly inspried by [moul](https://moul.app).
+`foto` is highly inspired by [moul](https://moul.app).
