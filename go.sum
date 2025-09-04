@@ -71,10 +71,10 @@ github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
-github.com/tdewolff/minify/v2 v2.23.11 h1:cZqTVCtuVvPC8/GbCvYgIcdAQGmoxEObZzKeKIUixTE=
-github.com/tdewolff/minify/v2 v2.23.11/go.mod h1:vmkbfGQ5hp/eYB+TswNWKma67S0a+32HBL+mFWxjZ2Q=
-github.com/tdewolff/parse/v2 v2.8.2-0.20250806174018-50048bb39781 h1:2qicgFovKg1XtX7Wf6GwexUdpb7q/jMIE2IgkYsVAvE=
-github.com/tdewolff/parse/v2 v2.8.2-0.20250806174018-50048bb39781/go.mod h1:Hwlni2tiVNKyzR1o6nUs4FOF07URA+JLBLd6dlIXYqo=
+github.com/tdewolff/minify/v2 v2.24.2 h1:vnY3nTulEAbCAAlxTxPPDkzG24rsq31SOzp63yT+7mo=
+github.com/tdewolff/minify/v2 v2.24.2/go.mod h1:1JrCtoZXaDbqioQZfk3Jdmr0GPJKiU7c1Apmb+7tCeE=
+github.com/tdewolff/parse/v2 v2.8.3 h1:5VbvtJ83cfb289A1HzRA9sf02iT8YyUwN84ezjkdY1I=
+github.com/tdewolff/parse/v2 v2.8.3/go.mod h1:Hwlni2tiVNKyzR1o6nUs4FOF07URA+JLBLd6dlIXYqo=
 github.com/tdewolff/test v1.0.11 h1:FdLbwQVHxqG16SlkGveC0JVyrJN62COWTRyUFzfbtBE=
 github.com/tdewolff/test v1.0.11/go.mod h1:XPuWBzvdUzhCuxWO1ojpXsyzsA5bFoS3tO/Q3kFuTG8=
 go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
