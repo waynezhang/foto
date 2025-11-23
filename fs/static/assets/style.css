@@ -24,6 +24,7 @@ header .title { font-size: 1.6em; font-weight: bold; line-height: 1.6em; }
 header .description { line-height: 1.6em; }
 header nav { margin: 1em 0; }
 header nav a { margin: 0 0.6em; }
+header nav img { height: 24px; }
 
 .section { margin-top: 3em; }
 .section-header-wrapper { max-width: 800px; margin-left: 4em; }
