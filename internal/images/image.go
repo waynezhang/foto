@@ -120,7 +120,7 @@ func GetEXIFValues(path string) (map[string]string, error) {
 }
 
 func extToFormat(ext string) imagemeta.ImageFormat {
-	switch ext {
+	switch strings.ToLower(ext) {
 	case ".jpg", ".jpeg":
 		return imagemeta.JPEG
 	case ".webp":
