@@ -1,3 +1,7 @@
+## v1.7.1 (2026-01-07)
+
+- fix(#100): supported file type logic should be case-insensitive
+
 ## v1.7.0 (2025-05-26)
 
 ### New feature
