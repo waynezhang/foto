@@ -104,7 +104,7 @@ func GetEXIFValues(path string) (map[string]string, error) {
 
 	imageFormat := extToFormat(filepath.Ext(path))
 
-	err = imagemeta.Decode(
+	_, err = imagemeta.Decode(
 		imagemeta.Options{
 			R:           img,
 			ImageFormat: imageFormat,
