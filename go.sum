@@ -1,5 +1,5 @@
-github.com/bep/imagemeta v0.14.0 h1:xmeB/XPmhrXJmSxTiE7KT4C56xfcSrcaGjVsNe+t6Ro=
-github.com/bep/imagemeta v0.14.0/go.mod h1:3psQjuZwn53rPCa86ai0p4KKnO+QArpuWLRdi5/30q8=
+github.com/bep/imagemeta v0.15.0 h1:fsQ9GcOq15f0RPGwsXQUAmj0PileCrj6n8LQqffNYBQ=
+github.com/bep/imagemeta v0.15.0/go.mod h1:+Hlp195TfZpzsqCxtDKTG6eWdyz2+F2V/oCYfr3CZKA=
 github.com/chelnak/ysmrr v0.6.0 h1:kMhO0oI02tl/9szvxrOE0yeImtrK4KQhER0oXu1K/iM=
 github.com/chelnak/ysmrr v0.6.0/go.mod h1:56JSrmQgb7/7xoMvuD87h3PE/qW6K1+BQcrgWtVLTUo=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
