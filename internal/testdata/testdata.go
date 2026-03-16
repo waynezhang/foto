@@ -25,12 +25,12 @@ const (
 	ThumbnailWidth            = 640
 	ThumbnailHeight           = 480
 	ThumbnailFile             = "../../testdata/testfile-640.jpg"
-	ExpectedThubmnailChecksum = "1c8a6195eefb53be554d86df9de1ae7c5559fa71938be1db595c3bef6c063796"
+	ExpectedThubmnailChecksum = "5cfc9cbf71c5d3da63a675c7594d44f055aab820c7c8ff810aff536a75603e1c"
 
 	CompressQuality = 75
 
 	CompressQualityHQ           = 100
-	ExpectedThubmnailHQChecksum = "2ff919b7f866c18ca835f37c6f550f80b4d39397a172e6fffab44ad93c9023ca"
+	ExpectedThubmnailHQChecksum = "946113d27701c3c14faf070e65fb6914da75e607cc31302342035348263a2d2f"
 )
 
 var (
@@ -130,7 +130,7 @@ var (
 
 	WebpThumbnailWidth            = 640
 	WebpThumbnailHeight           = 480
-	WebpExpectedThubmnailChecksum = "5a5f8fcae2e37e504d6e062ee8adefac45ec9102a410faa16d4a0278b310b0c8"
+	WebpExpectedThubmnailChecksum = "7d51ceeff5147d6b68927c53bc5f1352972222b6842575fbc354b9cf386d9483"
 )
 
 var (
@@ -140,7 +140,7 @@ var (
 
 	PngThumbnailWidth            = 640
 	PngThumbnailHeight           = 480
-	PngExpectedThubmnailChecksum = "c52322af93c85de909aa5774f58ab2b26ad13f95e405f4ce42703468f3490ab3"
+	PngExpectedThubmnailChecksum = "ec57f36fadd9af74e497f19633880ca015902b32dee90ac001672f71f071919e"
 )
 
 var (

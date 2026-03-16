@@ -1,6 +1,6 @@
 module github.com/waynezhang/foto
 
-go 1.24.1
+go 1.26.1
 
 require (
 	github.com/bep/imagemeta v0.14.0
