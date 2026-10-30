@@ -3,7 +3,7 @@ module github.com/waynezhang/foto
 go 1.26.1
 
 require (
-	github.com/bep/imagemeta v1.0.1
+	github.com/bep/imagemeta v1.1.0
 	github.com/chelnak/ysmrr v0.6.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/mitchellh/mapstructure v1.5.0
@@ -33,8 +33,8 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tdewolff/parse/v2 v2.8.20 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sync v0.24.0 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/term v0.39.0 // indirect
-	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 )
